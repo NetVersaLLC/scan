@@ -1,8 +1,8 @@
 worker_processes 8
 working_directory "/home/ubuntu/app"
-listen 'unix:/home/ubuntu/app/finder.sock', :backlog => 512
+listen 'unix:/home/ubuntu/app/shared/unicorn.sock', :backlog => 512
 timeout 120
-pid "/home/ubuntu/app/finder.pid"
+pid "/home/ubuntu/app/shared/unicorn.pid"
 stderr_path "/home/ubuntu/app/log/unicorn.stderr.log"
 stdout_path "/home/ubuntu/app/log/unicorn.stdout.log"
 

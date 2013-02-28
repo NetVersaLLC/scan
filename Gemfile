@@ -7,3 +7,5 @@ gem 'headless'
 gem 'json'
 gem 'airbrake'
 gem 'unicorn'
+gem 'capistrano'
+gem 'capistrano-unicorn', :require => false
