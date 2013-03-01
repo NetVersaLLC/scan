@@ -16,12 +16,12 @@ use Airbrake::Sinatra
 set :port, 80
 set :environment, :production
 
-browser = Watir::Browser.new
 headless = Headless.new
 headless.start
 at_exit do
   headless.destroy
 end
+browser = Watir::Browser.new
 
 use Rack::Auth::Basic, "Restricted Area" do |username,password|
   [username,password] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
