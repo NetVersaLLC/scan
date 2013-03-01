@@ -21,7 +21,6 @@ headless.start
 at_exit do
   headless.destroy
 end
-browser = Watir::Browser.new
 
 use Rack::Auth::Basic, "Restricted Area" do |username,password|
   [username,password] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
@@ -36,11 +35,13 @@ post '/jobs.json' do
   data = params['payload_data']
   @chained = true
   errors = nil
-  if (rand()*20).to_i == 15
-    browser.close
-    browser = Watir::Browser.new
+  if browser.nil?
+    @browser = Watir::Browser.new
+  elsif (rand()*20).to_i == 15
+    @browser.close
+    @browser = Watir::Browser.new
   end
-  @browser = browser
+
   begin
 	ret,result =  eval(params['payload'])
 	if ret == true
