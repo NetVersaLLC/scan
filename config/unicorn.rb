@@ -3,8 +3,8 @@ working_directory "/home/ubuntu/app/current"
 listen 'unix:/home/ubuntu/app/shared/unicorn.sock', :backlog => 512
 timeout 120
 pid "/home/ubuntu/app/shared/unicorn.pid"
-stderr_path "/home/ubuntu/app/log/unicorn.stderr.log"
-stdout_path "/home/ubuntu/app/log/unicorn.stdout.log"
+stderr_path "/home/ubuntu/app/shared/log/unicorn.stderr.log"
+stdout_path "/home/ubuntu/app/shared/log/unicorn.stdout.log"
 
 preload_app true
 if GC.respond_to?(:copy_on_write_friendly=)
