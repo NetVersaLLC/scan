@@ -13,8 +13,8 @@ end
 
 use Airbrake::Sinatra
 
-set :port, 80
-set :environment, :production
+# set :port, 80
+# set :environment, :production
 
 headless = Headless.new
 headless.start
@@ -22,9 +22,12 @@ at_exit do
   headless.destroy
 end
 
-use Rack::Auth::Basic, "Restricted Area" do |username,password|
-  [username,password] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
+configure do
+  use Rack::Auth::Basic, "login" do |u, p|
+    [u,p] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
+  end
 end
+
 
 get '/' do
   "Welcome"
