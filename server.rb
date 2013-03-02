@@ -13,8 +13,8 @@ end
 
 use Airbrake::Sinatra
 
-# set :port, 80
-# set :environment, :production
+set :port, 80
+set :environment, :production
 
 headless = Headless.new
 headless.start
