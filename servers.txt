@@ -1,9 +1,1 @@
 ec2-23-22-11-179.compute-1.amazonaws.com
-ec2-184-73-128-130.compute-1.amazonaws.com
-ec2-54-234-167-81.compute-1.amazonaws.com
-ec2-184-72-137-195.compute-1.amazonaws.com
-ec2-23-22-154-163.compute-1.amazonaws.com
-ec2-23-22-166-38.compute-1.amazonaws.com
-ec2-54-234-13-228.compute-1.amazonaws.com
-ec2-184-73-78-135.compute-1.amazonaws.com
-ec2-54-234-253-220.compute-1.amazonaws.com

@@ -38,7 +38,7 @@ post '/jobs.json' do
   data = params['payload_data']
   @chained = true
   errors = nil
-  if browser.nil?
+  if @browser.nil?
     @browser = Watir::Browser.new
   elsif (rand()*20).to_i == 15
     @browser.close
