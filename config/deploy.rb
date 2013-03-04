@@ -7,7 +7,7 @@ set :user, "ubuntu"
 set :use_sudo, false
 set :ssh_options, { :keys => ["#{ENV['HOME']}/Dropbox/NetVersa2.pem"] }
 set :unicorn_conf, "#{deploy_to}/current/config/unicorn.rb"
-set :unicorn_pid, "#{deploy_to}/shared/pids/unicorn.pid"
+set :unicorn_pid, "#{deploy_to}/shared/unicorn.pid"
 
 default_run_options[:shell] = 'bash -l'
 set :scm, :git
@@ -24,12 +24,12 @@ set :deploy_via, "remote_cache"
 
 namespace :deploy do
   task :restart do
-    run "if [ -f #{unicorn_pid} ]; then kill -USR2 `cat #{unicorn_pid}`; else cd #{deploy_to}/current && bundle exec unicorn -c #{unicorn_conf} -E #{rails_env} -D; fi"
+    run "if [ -f #{unicorn_pid} ]; then sudo service unicorn restart; else sudo service unicorn start; fi"
   end
   task :start do
-    run "cd #{deploy_to}/current && bundle exec unicorn -c #{unicorn_conf} -E #{rails_env} -D"
+    run "cd #{deploy_to}/current && sudo service unicorn start"
   end
   task :stop do
-    run "if [ -f #{unicorn_pid} ]; then kill -QUIT `cat #{unicorn_pid}`; fi"
+    run "if [ -f #{unicorn_pid} ]; then sudo service unicorn stop; fi"
   end
 end
