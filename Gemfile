@@ -9,3 +9,4 @@ gem 'airbrake'
 gem 'unicorn'
 gem 'capistrano'
 gem 'capistrano-unicorn', :require => false
+gem 'selenium-webdriver', '~> 2.31.0'
