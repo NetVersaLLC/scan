@@ -33,18 +33,19 @@ get '/' do
   "Welcome"
 end
 
-browser = nil
+@browser = nil
 
 post '/jobs.json' do
   content_type :json
   data = params['payload_data']
+  @data = data
   @chained = true
   errors = nil
-  if browser.nil?
-    browser = Watir::Browser.new
+  if @browser.nil?
+    @browser = Watir::Browser.new
   elsif (rand()*20).to_i == 15
-    browser.close
-    browser = Watir::Browser.new
+    @browser.close
+    @browser = Watir::Browser.new
   end
 
   begin
