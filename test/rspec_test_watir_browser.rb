@@ -7,17 +7,19 @@ describe "An Amazon search" do
     @browser.goto("http://www.amazon.com")
   end
  
-  it "should display results range" do
+  def search_for(term)
     @browser.select_list(:id, "searchDropdownBox").select("Books")
-    @browser.text_field(:name, 'field-keywords').set("star wars")
+    @browser.text_field(:name, 'field-keywords').set(term)
     @browser.button(:alt, "Go").click
+  end
+ 
+  it "should display results range" do
+    search_for("star wars")
     @browser.text.should match(/Showing .* of .* Results/)
   end
  
   it "should reflect the search context in the title" do
-    @browser.select_list(:id, "searchDropdownBox").select("Books")
-    @browser.text_field(:name, 'field-keywords').set("star wars")
-    @browser.button(:alt, "Go").click
+    search_for("star wars")
     @browser.title.should == "Amazon.com: star wars: Books"
   end
  
