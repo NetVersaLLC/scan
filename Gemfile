@@ -11,5 +11,5 @@ gem 'capistrano'
 gem 'capistrano-unicorn', :require => false
 gem 'selenium-webdriver', '~> 2.31.0'
 
-gem rspec
-gem install capybara
+gem 'rspec'
+gem 'capybara'
