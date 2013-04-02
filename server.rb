@@ -3,6 +3,8 @@ require 'json'
 require 'watir-webdriver'
 require 'headless'
 require 'airbrake'
+require 'rest_client'
+require 'nokogiri'
 
 configure do
   use Rack::Auth::Basic, "login" do |u, p|
