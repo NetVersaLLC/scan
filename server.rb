@@ -21,12 +21,6 @@ at_exit do
 end
 @browser = Watir::Browser.new
 
-configure do
-  use Rack::Auth::Basic, "login" do |u, p|
-    [u,p] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
-  end
-end
-
 get '/' do
   "Welcome"
 end
