@@ -6,12 +6,6 @@ require 'airbrake'
 require 'rest_client'
 require 'nokogiri'
 
-configure do
-  use Rack::Auth::Basic, "login" do |u, p|
-    [u,p] == ['api', '13fc9e78f643ab9a2e11a4521479fdfe']
-  end
-end
-
 Airbrake.configure do |config|
   config.api_key = '30669d26d752050b00c0b35f52a2f7b2'
   config.host    = 'errors.netversa.com'
