@@ -1,1 +1,5 @@
+# ignore all the log folders
 log/*
+
+# ignore the .bundler config folder
+.bundle/*

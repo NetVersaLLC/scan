@@ -1,10 +1,6 @@
-require 'sinatra'
-require 'json'
-require 'watir-webdriver'
-require 'headless'
-require 'airbrake'
-require 'rest_client'
-require 'nokogiri'
+require 'rubygems'
+require 'bundler'
+Bundler.require
 
 Airbrake.configure do |config|
   config.api_key = '30669d26d752050b00c0b35f52a2f7b2'
