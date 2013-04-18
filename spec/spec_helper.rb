@@ -8,10 +8,11 @@ set :run, false
 set :raise_errors, true
 set :logging, false
 
-def server
+def app
   Sinatra::Application
 end
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
 end
+
