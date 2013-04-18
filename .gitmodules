@@ -1,0 +1,3 @@
+[submodule "sites"]
+	path = sites
+	url = git@github.com:netversa/sites.git
