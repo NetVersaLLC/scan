@@ -9,9 +9,16 @@ set :ssh_options, { :keys => ["#{ENV['HOME']}/Dropbox/new_keys/deploy/scan"] }
 set :unicorn_conf, "#{deploy_to}/current/config/unicorn.rb"
 set :unicorn_pid, "#{deploy_to}/shared/unicorn.pid"
 
-default_run_options[:shell] = 'bash -l'
+set :default_shell, "bash -l"
+set :rvm_ruby_string, '1.9.3'
+set :rvm_type, :user
+
+set :use_sudo   , false
+# set :ssh_options, {:forward_agent => true}
+
+# default_run_options[:shell] = 'bash -l'
 set :scm, :git
-set :repository,  "git@github.com:jjeffus/scan.git"
+set :repository,  "git@github.com:NetVersaLLC/scan.git"
 set :branch, 'master'
 set :git_shallow_clone, 1
 set :rails_env, :production
@@ -20,7 +27,7 @@ role :web, *domain
 role :app, *domain
 role :db,  *domain, :primary => true
 
-set :deploy_via, "remote_cache"
+# set :deploy_via, "remote_cache"
 
 namespace :deploy do
   task :restart do
