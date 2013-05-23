@@ -5,7 +5,7 @@ set :application, "scanner"
 set :deploy_to, "/home/ubuntu/app"
 set :user, "ubuntu"
 set :use_sudo, false
-set :ssh_options, { :keys => ["#{ENV['HOME']}/Dropbox/NetVersa2.pem"] }
+set :ssh_options, { :keys => ["#{ENV['HOME']}/Dropbox/new_keys/deploy/scan"] }
 set :unicorn_conf, "#{deploy_to}/current/config/unicorn.rb"
 set :unicorn_pid, "#{deploy_to}/shared/unicorn.pid"
 

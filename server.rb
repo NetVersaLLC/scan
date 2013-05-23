@@ -7,7 +7,7 @@ require 'rest_client'
 require 'nokogiri'
 
 Airbrake.configure do |config|
-  config.api_key = '30669d26d752050b00c0b35f52a2f7b2'
+  config.api_key = '671bbb8cee606d1241528e892b853d69'
   config.host    = 'errors.netversa.com'
   config.port    = 80
   config.secure  = config.port == 443
