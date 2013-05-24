@@ -10,6 +10,9 @@ gem 'unicorn'
 gem 'capistrano'
 gem 'capistrano-unicorn', :require => false
 gem 'selenium-webdriver', '~> 2.31.0'
+gem 'mechanize'
+gem 'rest-client'
+gem 'awesome_print'
 
 gem 'rspec'
 gem 'capybara'

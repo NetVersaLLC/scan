@@ -5,6 +5,8 @@ require 'headless'
 require 'airbrake'
 require 'rest_client'
 require 'nokogiri'
+require 'mechanize'
+require 'awesome_print'
 
 Airbrake.configure do |config|
   config.api_key = '671bbb8cee606d1241528e892b853d69'
@@ -19,29 +21,37 @@ headless.start
 at_exit do
   headless.destroy
 end
-@browser = Watir::Browser.new
 
 get '/' do
   "Welcome"
 end
 
-@browser = nil
-
-post '/jobs.json' do
+post '/scan.json' do
   content_type :json
-  data = params['payload_data']
-  @data = data
-  @chained = true
-  errors = nil
-  if @browser.nil?
-    @browser = Watir::Browser.new
-  elsif (rand()*20).to_i == 15
-    @browser.close
-    @browser = Watir::Browser.new
+  site = params[:site]
+
+  file = __FILE__
+  parts = file.split("/")
+  parts.pop
+  parts.push "sites", site, "SearchListing", "client_script.rb"
+  file = parts.join("/")
+  payload = File.open( file, "r" ).read
+
+  unless File.exists? file
+    return {:error => 'No Listing', :result => result}.to_json
   end
 
+  data = {}
+  if params[:payload_data]
+    data = JSON.parse( params[:payload_data] )
+  end
+
+  @chained = true
+  errors = nil
+
   begin
-	ret,result =  eval(params['payload'])
+    ap data
+	ret,result =  eval(payload)
 	if ret == true
 		errors = {:error => nil, :result => result}
 	elsif ret == false
