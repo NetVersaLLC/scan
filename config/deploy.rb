@@ -29,6 +29,13 @@ role :db,  *domain, :primary => true
 
 # set :deploy_via, "remote_cache"
 
+def after_update_code
+  run "ln -s #{shared_path}/sites #{release_path}/sites"
+  run "cd #{shared_path}/sites && git pull origin master"
+end
+
+after 'deploy:assets',     'after_update_code'
+
 namespace :deploy do
   task :restart do
     run "if [ -f #{unicorn_pid} ]; then sudo service unicorn restart; else sudo service unicorn start; fi"
