@@ -29,12 +29,12 @@ role :db,  *domain, :primary => true
 
 # set :deploy_via, "remote_cache"
 
-def after_update_code
+def update_sites_repo
   run "ln -s #{shared_path}/sites #{release_path}/sites"
   run "cd #{shared_path}/sites && git pull origin master"
 end
 
-after 'deploy:assets',     'after_update_code'
+after 'deploy:create_symlink',     :update_sites_repo
 
 namespace :deploy do
   task :restart do
