@@ -29,7 +29,7 @@ role :db,  *domain, :primary => true
 
 # set :deploy_via, "remote_cache"
 
-def update_sites_repo
+task :update_sites_repo do
   run "ln -s #{shared_path}/sites #{release_path}/sites"
   run "cd #{shared_path}/sites && git pull origin master"
 end
