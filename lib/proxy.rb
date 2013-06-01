@@ -1,6 +1,8 @@
 class Proxy < ActiveRecord::Base
   def self.get
-    Proxy.first(:order => "RANDOM()")
+    proxy = Proxy.first(:order => "RANDOM()")
+    STDERR.puts proxy.inspect
+    proxy
   end
   def self.mechanize
     proxy = self.get
