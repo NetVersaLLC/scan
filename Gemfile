@@ -15,5 +15,6 @@ gem 'rest-client'
 gem 'awesome_print'
 gem 'rspec'
 gem 'capybara'
+gem 'activerecord'
 gem "sinatra-activerecord"
 gem "sqlite3"
