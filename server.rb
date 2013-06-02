@@ -7,6 +7,8 @@ require 'rest_client'
 require 'nokogiri'
 require 'mechanize'
 require 'awesome_print'
+require 'active_record'
+require 'sinatra/activerecord'
 require './lib/proxy'
 
 Airbrake.configure do |config|

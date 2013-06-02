@@ -7,12 +7,13 @@ require 'nokogiri'
 require 'mechanize'
 require 'awesome_print'
 require 'cgi'
+require 'activerecord'
 require './lib/proxy'
 
-# ActiveRecord::Base.establish_connection(
-#  :adapter  => 'sqlite3',
-#  :database => "database.sqlite3"
-#)
+ActiveRecord::Base.establish_connection(
+  :adapter  => 'sqlite3',
+  :database => "database.sqlite3"
+)
 
 headless = Headless.new
 headless.start
