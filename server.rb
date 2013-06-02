@@ -11,6 +11,8 @@ require 'active_record'
 require 'sinatra/activerecord'
 require './lib/proxy'
 
+set :database, 'sqlite://database.sqlite3'
+
 Airbrake.configure do |config|
   config.api_key = '671bbb8cee606d1241528e892b853d69'
   config.host    = 'errors.netversa.com'
