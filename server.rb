@@ -7,11 +7,7 @@ require 'rest_client'
 require 'nokogiri'
 require 'mechanize'
 require 'awesome_print'
-require 'active_record'
-require "sinatra/activerecord"
 require './lib/proxy'
-
-set :database, "sqlite3:///database.sqlite3"
 
 Airbrake.configure do |config|
   config.api_key = '671bbb8cee606d1241528e892b853d69'

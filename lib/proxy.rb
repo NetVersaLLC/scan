@@ -1,8 +1,22 @@
-class Proxy < ActiveRecord::Base
+class Proxy
+  attr_accessor :host, :port, :username, :password
+  def initialize(host, port)
+    @host     = host
+    @port     = port
+    @username = 'USfn84YlAPio'
+    @password = 'auxSv8ixd3'
+  end
   def self.get
-    proxy = Proxy.first(:order => "RANDOM()")
-    STDERR.puts proxy.inspect
-    proxy
+    unless @proxies
+      file  = __FILE__.split("/")
+      file.pop
+      file.pop
+      file.push 'proxies.txt'
+      @proxies = IO.readlines(file.join("/"))
+    end
+    proxy = @proxies[ rand( @proxies.length  ) ].strip
+    username, password = *proxy.split(":")
+    return Proxy.new( username, password )
   end
   def self.mechanize
     proxy = self.get
@@ -11,7 +25,7 @@ class Proxy < ActiveRecord::Base
   end
   def self.restclient
     proxy = self.get
-    RestClient.proxy "http://#{proxy.username}:#{proxy.password}@#{proxy.host}:#{proxy.port}"
+    RestClient.proxy = "http://#{proxy.username}:#{proxy.password}@#{proxy.host}:#{proxy.port}"
   end
 end
 
