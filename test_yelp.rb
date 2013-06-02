@@ -2,7 +2,7 @@
 
 require 'mechanize'
 require 'awesome_print'
-require 'activerecord'
+require 'active_record'
 require './lib/proxy'
 
 ActiveRecord::Base.establish_connection(

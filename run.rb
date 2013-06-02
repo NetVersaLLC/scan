@@ -7,7 +7,7 @@ require 'nokogiri'
 require 'mechanize'
 require 'awesome_print'
 require 'cgi'
-require 'activerecord'
+require 'active_record'
 require './lib/proxy'
 
 ActiveRecord::Base.establish_connection(
