@@ -17,7 +17,7 @@ class Proxy < ActiveRecord::Base
     # proxy = @proxies[ rand( @proxies.length  ) ].strip
     # username, password = *proxy.split(":")
     # return Proxy.new( username, password )
-    return Proxy.order('RAND()').first
+    return Proxy.order('RANDOM()').first
   end
   def self.mechanize
     proxy = self.get
