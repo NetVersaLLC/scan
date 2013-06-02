@@ -22,6 +22,7 @@ class Proxy
     proxy = self.get
     mech = Mechanize.new
     mech.set_proxy proxy.host, proxy.port, proxy.username, proxy.password
+    mech
   end
   def self.restclient
     proxy = self.get
