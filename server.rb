@@ -1,7 +1,5 @@
 require 'sinatra'
 require 'json'
-require 'watir-webdriver'
-require 'headless'
 require 'airbrake'
 require 'rest_client'
 require 'nokogiri'
@@ -20,12 +18,6 @@ Airbrake.configure do |config|
   config.secure  = config.port == 443
 end
 use Airbrake::Sinatra
-
-headless = Headless.new
-headless.start
-at_exit do
-  headless.destroy
-end
 
 get '/' do
   "Welcome"
