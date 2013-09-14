@@ -14,9 +14,13 @@ Proxy.all.each do |proxy|
   mech = Mechanize.new
   mech.set_proxy proxy.host, proxy.port, proxy.username, proxy.password
   mech.user_agent_alias = 'Mac FireFox'
+  mech.read_timeout = 5
+  mech.open_timeout = 5
   begin
+    print "testing #{proxy.host}: "
     mech.get('https://biz.yelp.com/signup')
-  rescue Mechanize::ResponseCodeError
+    puts "OK"
+  rescue Mechanize::ResponseCodeError, Net::HTTPServerException, Timeout::Error
     STDERR.puts "Proxy is bad: #{proxy.inspect}"
     proxy.delete
     next
