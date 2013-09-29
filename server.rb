@@ -4,6 +4,16 @@ require 'airbrake'
 require 'awesome_print'
 require 'active_record'
 require 'sinatra/activerecord'
+
+
+# adding application base include path
+application_path = File.dirname(__FILE__)
+$:.unshift application_path
+
+# loading environment-specific settings
+all_settings = Psych.load(File.read(application_path + '/application.yml'))
+$settings = all_settings[ENV['RACK_ENV']]
+
 require 'lib/scanner'
 
 set :database, 'sqlite://database.sqlite3'
@@ -22,18 +32,26 @@ end
 
 post '/scan.json' do
   content_type :json
-  site = params[:site]
 
-  data = {}
+  site = params[:site]
+  data = params[:scan]
+  if data['id'].nil?
+    return {:error => 'No scan id provided'}.to_json
+  end
 
   begin
     scanner = Scanner.new(site, data)
-    scanner.scan.to_json
-  rescue e => e
-    return {:error => e}.to_json
+  rescue => e
+    return {:error => e.to_s}.to_json
   end
+  th = Thread.new(scanner) { |scanner|
+    begin
+      scanner.scan
+    rescue => e
+      puts "thread died with exception: " + e.to_s
+    end
+  }
+  th.join
+  {:error => nil, :result => 'ok'}.to_json
 end
 
-get '/ping' do
-  "pong"
-end
