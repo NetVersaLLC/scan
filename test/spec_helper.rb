@@ -13,7 +13,7 @@ $:.unshift application_path
 
 # loading environment-specific settings
 all_settings = Psych.load(File.read(application_path + '/application.yml'))
-$settings = all_settings[ENV['RACK_ENV']]
+$settings = all_settings[Sinatra::Base.settings.environment.to_s]
 
 
 def sample_data

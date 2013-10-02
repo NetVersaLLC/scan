@@ -8,10 +8,9 @@ require 'uri'
 
 class Scanner
 
-  attr_accessor :browser, :data
+  attr_accessor :data
 
   def initialize(site, data)
-    @browser = Watir::Browser.new
     @data = data
     @site = site
     @chained = true
@@ -25,11 +24,6 @@ class Scanner
   def data
     @data
   end
-
-  def browser
-    @browser
-  end
-
 
   def http_client
     if @http_client.nil?
@@ -54,24 +48,25 @@ class Scanner
   end
 
   def scan
+    @browser = Watir::Browser.new
     RestClient.proxy = nil
-    scan = {}
+    result = {}
     begin
-      ret, scan = eval(@payload, get_binding)
+      ret, result = eval(@payload, get_binding)
       unless ret == true
-        scan[:error_message] = 'Job failed'
+        result[:error_message] = 'Job failed'
       end
     rescue => e
-      scan[:error_message] = "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
+      result[:error_message] = "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
     end
-    browser.close
-    scan[:id] = data['id']
+    @browser.close
+    @browser = nil
+    result[:id] = data['id']
     response = {
-        :scan => scan,
+        :scan => result,
         :token => $settings['callback_auth_token']
     }
     make_callback(response)
-    scan # not used
   end
 
   def get_payload
