@@ -48,7 +48,9 @@ class Scanner
   end
 
   def scan
-    @browser = Watir::Browser.new
+    if @payload.include?('@browser') do # initializing browser only for workers that actually using it
+      @browser = Watir::Browser.new
+    end
     RestClient.proxy = nil
     result = {}
     begin
@@ -59,8 +61,10 @@ class Scanner
     rescue => e
       result[:error_message] = "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
     end
-    @browser.close
-    @browser = nil
+    if @browser do
+      @browser.close
+      @browser = nil
+    end
     result[:id] = data['id']
     response = {
         :scan => result,
