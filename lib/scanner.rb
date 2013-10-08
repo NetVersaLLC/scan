@@ -56,6 +56,7 @@ class Scanner
     begin
       ret, result = eval(@payload, get_binding)
       unless ret == true
+        result = {} if result.nil?
         result[:error_message] = 'Job failed'
       end
     rescue => e
