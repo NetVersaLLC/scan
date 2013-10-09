@@ -28,6 +28,10 @@ class Scanner
   def http_client
     if @http_client.nil?
       @http_client = Net::HTTP.new($settings['task_server_host'], $settings['task_server_port'])
+      if $settings['task_server_port'] == 443
+        @http_client.use_ssl = true
+        @http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
     end
     @http_client
   end

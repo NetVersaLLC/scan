@@ -47,4 +47,18 @@ describe 'Scanner' do
     scanner.scan
   end
 
+  #it 'debug' do
+  #  sample_callback_data = {
+  #      'scan' => {'id' => '123',
+  #                 "listed_name" => "Fifth Third Field",
+  #                 "listed_url" => "https://foursquare.com/v/fifth-third-field/4b155072f964a52096b023e3",
+  #                 "listed_address" => "406 Washington St, ToledoOH, 43604-1046",
+  #                 "listed_phone" => "(419) 725-4367",
+  #                 "status" => 'claimed'},
+  #      'token' => $settings['callback_auth_token']}
+  #
+  #  scanner = Scanner.new('Foursquare', sample_data)
+  #  scanner.scan
+  #end
+
 end
