@@ -1,0 +1,20 @@
+development:
+  task_server_host: localhost
+  task_server_port: 3000
+  auth_token: 13fc9e78f643ab9a2e11a4521479fdfe
+  callback_auth_token: 892457gh9q87fah98ef7hq987harhq9w87eh8
+test:
+  task_server_host: sync.towncenter.com
+  task_server_port: 443
+  auth_token: 13fc9e78f643ab9a2e11a4521479fdfe
+  callback_auth_token: 892457gh9q87fah98ef7hq987harhq9w87eh8
+staging:
+  task_server_host: staging.netversa.com
+  task_server_port: 80
+  auth_token: 13fc9e78f643ab9a2e11a4521479fdfe
+  callback_auth_token: 892457gh9q87fah98ef7hq987harhq9w87eh8
+production:
+  task_server_host: sync.towncenter.com
+  task_server_port: 443
+  auth_token: 13fc9e78f643ab9a2e11a4521479fdfe
+  callback_auth_token: 892457gh9q87fah98ef7hq987harhq9w87eh8

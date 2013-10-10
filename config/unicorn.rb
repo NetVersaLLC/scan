@@ -1,4 +1,4 @@
-worker_processes 30
+worker_processes 3
 working_directory "/home/ubuntu/app/current"
 listen 'unix:/home/ubuntu/app/shared/unicorn.sock', :backlog => 1024
 timeout 120

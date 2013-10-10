@@ -1,6 +1,10 @@
 require 'bundler/capistrano'
+require 'capistrano-unicorn'
 
-set :domain, File.open('servers.txt').read.split("\n")
+set :stages, %w(production staging)
+set :default_stage, "staging"
+require 'capistrano/ext/multistage'
+
 set :application, "scanner"
 set :deploy_to, "/home/ubuntu/app"
 set :user, "ubuntu"
@@ -23,9 +27,7 @@ set :branch, 'master'
 set :git_shallow_clone, 1
 set :rails_env, :production
 
-role :web, *domain
-role :app, *domain
-role :db,  *domain, :primary => true
+
 
 # set :deploy_via, "remote_cache"
 
