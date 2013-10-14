@@ -1,29 +1,28 @@
+require 'net/http'
+require 'uri'
 require 'watir-webdriver'
 require 'rest_client'
 require 'nokogiri'
 require 'mechanize'
 require 'lib/proxy'
-require 'net/http'
-require 'uri'
+require 'lib/payload'
+require 'sites/scrappers/abstract_scrapper.rb'
 
 class Scanner
 
-  attr_accessor :data
+  attr_accessor :data, :scrapper
 
   def initialize(site, data)
     @data = data
     @site = site
-    @chained = true
-    @payload = get_payload
+    @scrapper = get_scrapper
+    #todo: move scrapper object init here
   end
 
   def http_client=(client)
     @http_client = client
   end
 
-  def data
-    @data
-  end
 
   def http_client
     if @http_client.nil?
@@ -51,44 +50,38 @@ class Scanner
     end
   end
 
-  def scan
-    if @payload.include?('@browser') # initializing browser only for workers that actually using it
-      @browser = Watir::Browser.new
-    end
+  def scan(skip_callback = false)
     RestClient.proxy = nil
-    result = {}
     begin
-      ret, result = eval(@payload, get_binding)
-      unless ret == true
-        result = {} if result.nil?
-        result[:error_message] = 'Job failed'
-      end
+      result = @scrapper.execute
     rescue => e
-      result[:error_message] = "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
+      result = {
+          :error_message => "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
+      }
     end
-    if @browser
-      @browser.close
-      @browser = nil
-    end
+    close_browser # scrapper should close browser after himself, but it's better to be sure
     result[:id] = data['id']
     response = {
         :scan => result,
         :token => $settings['callback_auth_token']
     }
-    make_callback(response)
+    make_callback(response) unless skip_callback
+    response
   end
 
-  def get_payload
-    parts = __FILE__.split('/')
-    2.times { parts.pop }
-    parts.push 'sites', @site, 'SearchListing', 'client_script.rb'
-    file_path = parts.join('/')
-    File.open(file_path, 'r').read
+  def close_browser
+    unless @scrapper.browser.nil?
+      @scrapper.browser.close
+      @scrapper.browser = nil
+    end
   end
 
-
-  # returns binding object for eval() method
-  def get_binding
-    return binding()
+  def get_scrapper
+    begin
+      require 'sites/scrappers/' + @site.downcase + '.rb'
+      return Object.const_get(@site).new(@data)
+    rescue LoadError
+      return Payload.new(@site, @data)
+    end
   end
 end

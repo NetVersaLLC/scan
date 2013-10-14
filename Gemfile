@@ -15,9 +15,12 @@ gem 'awesome_print'
 gem 'rspec'
 gem 'rspec-mocks'
 gem 'capybara'
-gem 'activerecord', '~> 4.0.0.rc1'
+gem 'activerecord', '~> 4.0.0'
 gem 'sinatra-activerecord'
 gem 'sqlite3'
 gem 'iconv'
 gem 'watir-webdriver'
 gem 'headless'
+
+# debug only
+gem 'carmen', '0.2.13'

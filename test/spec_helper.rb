@@ -11,6 +11,8 @@ require 'rack/test'
 application_path = File.dirname(File.dirname(__FILE__))
 $:.unshift application_path
 
+require 'sites/scrappers/abstract_scrapper'
+
 # loading environment-specific settings
 all_settings = Psych.load(File.read(application_path + '/application.yml'))
 $settings = all_settings[Sinatra::Base.settings.environment.to_s]
@@ -28,6 +30,21 @@ def sample_data
       "state_short" => "OH",
       "city" => "Toledo",
       "county" => "Lucas",
+      "country" => "US"
+  }
+end
+
+def new_sample_data
+  {
+      "business" => "Inkling Tattoo Gallery",
+      "phone" => "(714) 538-8748",
+      "zip" => "92869",
+      "latitude" => "33.6209850000",
+      "longitude" => "-117.9321100000",
+      "state" => "California",
+      "state_short" => "CA",
+      "city" => "Orange",
+      "county" => "Orange",
       "country" => "US"
   }
 end
