@@ -34,7 +34,7 @@ def sample_data
   }
 end
 
-def new_sample_data
+def sample_claimed_business_data
   {
       "business" => "Inkling Tattoo Gallery",
       "phone" => "(714) 538-8748",
@@ -49,13 +49,21 @@ def new_sample_data
   }
 end
 
-#require 'rack/test'
+def sample_unclaimed_business_data
+  {
+      "business" => "Signal Lounge",
+      "phone" => "(714) 532-9035",
+      "zip" => "92869",
+      "latitude" => "33.6209850000",
+      "longitude" => "-117.9321100000",
+      "state" => "California",
+      "state_short" => "CA",
+      "city" => "Orange",
+      "county" => "Orange",
+      "country" => "US"
+  }
+end
 
 # set test environment
 Sinatra::Base.set :environment, :test
-#Sinatra::Base.set :run, false
-#Sinatra::Base.set :raise_errors, true
-#Sinatra::Base.set :logging, false
-
-#require File.join(File.dirname(__FILE__), '../application')
 

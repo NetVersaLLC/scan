@@ -4,7 +4,7 @@ require 'sites/scrappers/twitter'
 describe 'Twitter' do
 
   it 'should work' do
-    scrapper = Twitter.new(new_sample_data)
+    scrapper = Twitter.new(sample_claimed_business_data)
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :listed
