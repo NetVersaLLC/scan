@@ -1,5 +1,5 @@
 require_relative '../spec_helper'
-require 'sites/scrappers/twitter'
+require 'lib/scrappers/twitter'
 
 describe 'Twitter' do
 
