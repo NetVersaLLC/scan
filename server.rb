@@ -72,7 +72,7 @@ post '/scan.json' do
   end
 
   begin
-    scanner = Scanner.new(site, data)
+    scanner = Scanner.new(site, data, params[:callback_host], params[:callback_port])
   rescue => e
     return {:error => e.to_s}.to_json
   end

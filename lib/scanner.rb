@@ -12,10 +12,12 @@ class Scanner
 
   attr_accessor :data, :scrapper
 
-  def initialize(site, data)
+  def initialize(site, data, callback_host, callback_port)
     @data = data
     @site = site
     @scrapper = get_scrapper
+    @callback_host = callback_host
+    @callback_port = callback_port
     #todo: move scrapper object init here
   end
 
@@ -26,8 +28,8 @@ class Scanner
 
   def http_client
     if @http_client.nil?
-      @http_client = Net::HTTP.new($settings['task_server_host'], $settings['task_server_port'])
-      if $settings['task_server_port'] == 443
+      @http_client = Net::HTTP.new(@callback_host, @callback_port)
+      if @callback_port == 443
         @http_client.use_ssl = true
         @http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
@@ -44,6 +46,8 @@ class Scanner
 
   def make_callback(response)
     begin
+      #puts "callback host: " + @callback_host
+      #puts "callback port: " + @callback_port.to_s
       http_client.post('/scanapi/submit_scan_result', Rack::Utils.build_nested_query(stringify_values(response)))
     rescue => e
       raise 'Scan server callback failed: ' + e.to_s
