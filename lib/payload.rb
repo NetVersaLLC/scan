@@ -10,7 +10,7 @@ class Payload
   def initialize(site, data)
     @data = data
     @chained = true
-    @code = File.read(File.dirname(File.dirname(__FILE__)) + '/sites/' + site + '/SearchListing/client_script.rb')
+    @code = File.read(File.dirname(File.dirname(__FILE__)) + '/lib/scrappers/old/' + site.downcase + '.rb')
     if @code.include?('@browser')
       @browser = Watir::Browser.new
     end

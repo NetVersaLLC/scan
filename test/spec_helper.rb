@@ -11,7 +11,7 @@ require 'rack/test'
 application_path = File.dirname(File.dirname(__FILE__))
 $:.unshift application_path
 
-require 'sites/scrappers/abstract_scrapper'
+require 'lib/scrappers/abstract_scrapper'
 
 # loading environment-specific settings
 all_settings = Psych.load(File.read(application_path + '/application.yml'))

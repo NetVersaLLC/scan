@@ -6,7 +6,7 @@ require 'nokogiri'
 require 'mechanize'
 require 'lib/proxy'
 require 'lib/payload'
-require 'sites/scrappers/abstract_scrapper.rb'
+require 'lib/scrappers/abstract_scrapper.rb'
 
 class Scanner
 
@@ -46,8 +46,6 @@ class Scanner
 
   def make_callback(response)
     begin
-      #puts "callback host: " + @callback_host
-      #puts "callback port: " + @callback_port.to_s
       http_client.post('/scanapi/submit_scan_result', Rack::Utils.build_nested_query(stringify_values(response)))
     rescue => e
       raise 'Scan server callback failed: ' + e.to_s
@@ -82,7 +80,7 @@ class Scanner
 
   def get_scrapper
     begin
-      require 'sites/scrappers/' + @site.downcase + '.rb'
+      require 'lib/scrappers/' + @site.downcase + '.rb'
       return Object.const_get(@site).new(@data)
     rescue LoadError
       return Payload.new(@site, @data)
