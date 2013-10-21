@@ -54,7 +54,7 @@ post '/scrappertest' do
   data['state'] = Carmen::state_name(location.state)
 
   begin
-    scanner = Scanner.new(params[:site], data)
+    scanner = Scanner.new(params[:site], data, 'localhost', 80)
     result = scanner.scan(true) # true means skip callback
   rescue => e
     puts "scanner died with exception: #{e}: #{e.backtrace.join("\n")}"
