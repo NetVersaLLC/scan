@@ -57,7 +57,7 @@ post '/scrappertest' do
     scanner = Scanner.new(params[:site], data, 'localhost', 80)
     result = scanner.scan(true) # true means skip callback
   rescue => e
-    puts "scanner died with exception: #{e}: #{e.backtrace.join("\n")}"
+    return "scanner died with exception: #{e}: #{e.backtrace.join("\n")}"
   end
   result.to_json
 end

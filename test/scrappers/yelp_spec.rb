@@ -4,7 +4,7 @@ require 'lib/scrappers/yelp'
 describe 'Yelp' do
 
   it 'should work for claimed business' do
-    scrapper = Yelp.new(sample_claimed_business_data)
+    scrapper = Yelp.new(sample_data(0))
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :claimed
@@ -15,7 +15,7 @@ describe 'Yelp' do
   end
 
   it 'should work for unclaimed business' do
-    scrapper = Yelp.new(sample_unclaimed_business_data)
+    scrapper = Yelp.new(sample_data(2))
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :listed

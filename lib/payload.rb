@@ -12,7 +12,7 @@ class Payload
     @chained = true
     @code = File.read(File.dirname(File.dirname(__FILE__)) + '/lib/scrappers/old/' + site.downcase + '.rb')
     if @code.include?('@browser')
-      @browser = Watir::Browser.new
+      @browser = Watir::Browser.new :phantomjs
     end
   end
 

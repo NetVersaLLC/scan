@@ -75,6 +75,9 @@ class Scanner
     unless @scrapper.browser.nil?
       @scrapper.browser.close
       @scrapper.browser = nil
+      unless @scrapper.watir.nil?
+        @scrapper.watir.close
+      end
     end
   end
 
