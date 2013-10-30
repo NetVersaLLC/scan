@@ -1,5 +1,6 @@
 require 'mechanize'
 require 'rest-client'
+require 'headless'
 
 class AbstractScrapper
   def initialize(data)
@@ -27,7 +28,13 @@ class AbstractScrapper
 
   def watir
     if @watir.nil?
-      @watir = Watir::Browser.new :phantomjs
+      # unfortunately phantomjs does not handle redirects well.
+      # If it will change few versions later, headless may be removed
+      # @watir = Watir::Browser.new :phantomjs
+      if RUBY_PLATFORM =~ /linux/ then
+        @headless = Headless.new(display: 100, reuse: true, destroy_at_exit: false).start
+      end
+      @watir = Watir::Browser.new
     end
     @watir
   end

@@ -6,6 +6,8 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'sinatra/base'
 require 'rack/test'
+require 'watir-webdriver'
+require 'headless'
 
 # adding application base include path
 application_path = File.dirname(File.dirname(__FILE__))

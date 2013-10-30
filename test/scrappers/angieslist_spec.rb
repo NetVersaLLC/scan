@@ -11,8 +11,8 @@ describe 'Angieslist' do
     result.class.should == Hash
     result['status'].should == :listed
     result['listed_name'].should == business_data['business']
-    result['listed_phone'].should == business_data['phone']
-    result['listed_address'].should == "106 31st Street"
+    result['listed_address'].should == '106 31st Street, Newport Beach, CA'
+    result['listed_phone'].should == ''
   end
 
   it 'should not fail unlisted business' do
