@@ -1,8 +1,5 @@
 class Angieslist < AbstractScrapper
 
-  def search_business
-  end
-
   def execute
     watir.goto( 'https://business.angieslist.com/Registration/SimpleRegistration.aspx' )
     watir.image(:alt,'Search').wait_until_present
@@ -10,8 +7,6 @@ class Angieslist < AbstractScrapper
     watir.text_field(:id => /CompanyZip/).set @data[ 'zip' ]
     watir.image(:alt,'Search').click
     watir.div(:class, 'RegistrationLightbox').wait_until_present
-    #@error_msg = watir.span(:class,'errortext')
-
 
     result_count = watir.table(:class, 'wide100percent').rows.length
 
