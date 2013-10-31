@@ -1,5 +1,3 @@
-require 'awesome_print'
-
 class Mycitybusiness < AbstractScrapper
 
   def execute

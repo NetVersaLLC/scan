@@ -3,7 +3,7 @@ require 'lib/scrappers/mycitybusiness'
 
 describe 'Mycitybusiness' do
 
-  it 'should work for unlisted business' do
+  it 'should work for listed business' do
     business_data = sample_data(0)
     scrapper = Mycitybusiness.new(business_data)
     result = scrapper.execute
