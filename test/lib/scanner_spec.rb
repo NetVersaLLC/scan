@@ -39,6 +39,20 @@ describe 'Scanner' do
     end
   end
 
+  describe 'http_client' do
+    it 'should use ssl when callback_port is 443 ' do
+      scanner = Scanner.new('Yelp', {}, 'localhost', 443)
+      scanner.http_client.use_ssl?.should == true
+      scanner.http_client.verify_mode.should == OpenSSL::SSL::VERIFY_NONE
+    end
+
+    it 'should use ssl when callback_port is "443" ' do
+      scanner = Scanner.new('Yelp', {}, 'localhost', '443')
+      scanner.http_client.use_ssl?.should == true
+      scanner.http_client.verify_mode.should == OpenSSL::SSL::VERIFY_NONE
+    end
+  end
+
   #it 'debug' do
   #  sample_callback_data = {
   #      'scan' => {'id' => '123',
