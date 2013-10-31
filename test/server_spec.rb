@@ -17,7 +17,7 @@ describe 'Server' do
   end
 
   it 'should fail instantly when no id provided' do
-    data = sample_data
+    data = sample_data(1)
     data['id'] = nil
     post '/scan.json', :site => "Foursquare", :scan => data
     last_response.should be_ok
@@ -27,10 +27,10 @@ describe 'Server' do
 
 
   it 'should say OK and close connection for valid query' do
-    data = sample_data
+    data = sample_data(1)
     data['zip'] = 'nosuchzip'
     data['country'] = 'nosuchcountry'
-    post '/scan.json', :site => "Foursquare", :scan => sample_data
+    post '/scan.json', :site => "Foursquare", :scan => sample_data(1)
     last_response.should be_ok
     result = JSON.parse last_response.body
     result['error'].should be_nil

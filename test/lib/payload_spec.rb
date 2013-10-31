@@ -4,7 +4,7 @@ require 'lib/payload'
 describe 'Payload' do
 
   it 'should do work' do
-    scrapper = Payload.new('Foursquare', sample_data)
+    scrapper = Payload.new('Foursquare', sample_data(1))
     result = scrapper.execute
     result['status'].should == :claimed
     result['listed_name'].should == "Fifth Third Field"

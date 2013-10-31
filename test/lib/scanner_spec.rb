@@ -21,7 +21,7 @@ describe 'Scanner' do
       callback_data = Rack::Utils.parse_nested_query(query)
       callback_data.should == sample_callback_data
     end
-    scanner = Scanner.new('Foursquare', sample_data, 'localhost', 80)
+    scanner = Scanner.new('Foursquare', sample_data(1), 'localhost', 80)
     scanner.http_client = http_client_mock
     scanner.scan
   end
