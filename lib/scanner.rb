@@ -10,7 +10,7 @@ require 'lib/scrappers/abstract_scrapper.rb'
 
 class Scanner
 
-  attr_accessor :data, :scrapper
+  attr_accessor :scrapper
 
   def initialize(site, data, callback_host, callback_port)
     @data = data
@@ -62,7 +62,7 @@ class Scanner
       }
     end
     close_browser # scrapper should close browser after himself, but it's better to be sure
-    result[:id] = data['id']
+    result[:id] = @data['id']
     response = {
         :scan => result,
         :token => $settings['callback_auth_token']

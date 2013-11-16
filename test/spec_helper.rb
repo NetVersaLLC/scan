@@ -21,6 +21,7 @@ $settings = all_settings[Sinatra::Base.settings.environment.to_s]
 
 $business_data = {
     0 => {
+        "id" => '123',
         "business" => "Inkling Tattoo Gallery",
         "phone" => "(714) 538-8748",
         "zip" => "92869",
