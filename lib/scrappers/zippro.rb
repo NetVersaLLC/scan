@@ -1,3 +1,5 @@
+require 'awesome_print'
+
 class Zippro < AbstractScrapper
 
   def execute
@@ -13,12 +15,12 @@ class Zippro < AbstractScrapper
       businessFound['listed_name'] = link.text.strip
       link = link[0]["href"]
       businessFound['listed_url'] = link
+      businessFound['listed_address'] = page.at_xpath('//div[@id="zp_div_result_1"]//p').text
+
       subpage = Nokogiri::HTML(RestClient.get(link))
       businessFound['status'] = :listed
       phone = subpage.at_css("span.head_phone.iconsprite.inprofile_head").text
       businessFound['listed_phone'] = phone
-      address = subpage.at_xpath('//*[@id="profile_header"]/div/div[3]/div[1]/div[3]/span/span[1]').text + subpage.at_xpath('//*[@id="profile_header"]/div/div[3]/div[1]/div[3]/span/span[2]').text + subpage.at_xpath('//*[@id="profile_header"]/div/div[3]/div[1]/div[3]/span/span[3]').text + subpage.at_xpath('//*[@id="profile_header"]/div/div[3]/div[1]/div[3]/span/span[4]').text
-      businessFound['listed_address'] = address
     end
     businessFound
   end

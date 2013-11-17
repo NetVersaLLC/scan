@@ -61,7 +61,7 @@ class Scanner
           :error_message => "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
       }
     end
-    close_browser # scrapper should close browser after himself, but it's better to be sure
+    @scrapper.close_browser # kill firefox instance if exists
     result[:id] = @data['id']
     response = {
         :scan => result,
@@ -72,13 +72,6 @@ class Scanner
   end
 
   def close_browser
-    unless @scrapper.browser.nil?
-      @scrapper.browser.close
-      @scrapper.browser = nil
-      unless @scrapper.watir.nil?
-        @scrapper.watir.close
-      end
-    end
   end
 
   def get_scrapper

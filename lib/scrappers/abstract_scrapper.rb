@@ -11,6 +11,13 @@ class AbstractScrapper
     nil
   end
 
+  def close_browser
+    return if @watir.nil?
+    puts "closing browser"
+    @watir.close
+    @watir = nil
+  end
+
   def rest_client
     RestClient
   end
