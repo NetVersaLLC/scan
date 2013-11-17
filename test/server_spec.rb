@@ -10,7 +10,7 @@ describe 'Server' do
   end
 
   it 'should fail instantly for unknown site' do
-    post '/scan.json', :site => "nosuchsite1234", :scan => sample_data
+    post '/scan.json', :site => "nosuchsite1234", :scan => sample_data(0)
     last_response.should be_ok
     result = JSON.parse last_response.body
     result['error'].should_not eq nil
@@ -30,7 +30,7 @@ describe 'Server' do
     data = sample_data(1)
     data['zip'] = 'nosuchzip'
     data['country'] = 'nosuchcountry'
-    post '/scan.json', :site => "Foursquare", :scan => sample_data(1)
+    post '/scan.json', :site => "Foursquare", :scan => sample_data(0)
     last_response.should be_ok
     result = JSON.parse last_response.body
     result['error'].should be_nil

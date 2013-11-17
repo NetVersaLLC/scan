@@ -21,6 +21,7 @@ $settings = all_settings[Sinatra::Base.settings.environment.to_s]
 
 $business_data = {
     0 => {
+        "id" => '123',
         "business" => "Inkling Tattoo Gallery",
         "phone" => "(714) 538-8748",
         "zip" => "92869",
@@ -34,15 +35,15 @@ $business_data = {
     },
     1 => {
         "id" => '123',
-        "business" => "",
-        "phone" => "",
-        "zip" => "43652",
-        "latitude" => "41.650967",
-        "longitude" => "-83.536485",
-        "state" => "Ohio",
-        "state_short" => "OH",
-        "city" => "Toledo",
-        "county" => "Lucas",
+        "business" => "Connect Your Home",
+        "phone" => "(866) 308-3285",
+        "zip" => "92705",
+        "latitude" => "33.6209850000",
+        "longitude" => "-117.9321100000",
+        "state" => "California",
+        "state_short" => "CA",
+        "city" => "Orange",
+        "county" => "Orange",
         "country" => "US"
     },
     2 => {

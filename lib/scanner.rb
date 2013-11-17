@@ -10,7 +10,7 @@ require 'lib/scrappers/abstract_scrapper.rb'
 
 class Scanner
 
-  attr_accessor :data, :scrapper
+  attr_accessor :scrapper
 
   def initialize(site, data, callback_host, callback_port)
     @data = data
@@ -31,7 +31,9 @@ class Scanner
       @http_client = Net::HTTP.new(@callback_host, @callback_port)
       if @callback_port.to_i == 443
         @http_client.use_ssl = true
-        @http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        @http_client.ca_file = File.dirname(__FILE__) + '/ca-bundle.crt'
+        @http_client.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        #@http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
     end
     @http_client
@@ -61,8 +63,8 @@ class Scanner
           :error_message => "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
       }
     end
-    close_browser # scrapper should close browser after himself, but it's better to be sure
-    result[:id] = data['id']
+    @scrapper.close_browser # kill firefox instance if exists
+    result[:id] = @data['id']
     response = {
         :scan => result,
         :token => $settings['callback_auth_token']
@@ -72,13 +74,6 @@ class Scanner
   end
 
   def close_browser
-    unless @scrapper.browser.nil?
-      @scrapper.browser.close
-      @scrapper.browser = nil
-      unless @scrapper.watir.nil?
-        @scrapper.watir.close
-      end
-    end
   end
 
   def get_scrapper

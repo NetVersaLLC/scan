@@ -36,4 +36,8 @@ class Payload
   def get_binding
     binding()
   end
+
+  def close_browser
+    return true
+  end
 end
