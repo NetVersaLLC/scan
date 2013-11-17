@@ -31,7 +31,9 @@ class Scanner
       @http_client = Net::HTTP.new(@callback_host, @callback_port)
       if @callback_port.to_i == 443
         @http_client.use_ssl = true
-        @http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        @http_client.ca_file = File.dirname(__FILE__) + '/ca-bundle.crt'
+        @http_client.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        #@http_client.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end
     end
     @http_client
