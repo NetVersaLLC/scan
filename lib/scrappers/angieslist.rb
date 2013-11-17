@@ -1,4 +1,4 @@
-class Angieslist < AbstractScrapper
+class AngiesList < AbstractScrapper
 
   def execute
     watir.goto( 'https://business.angieslist.com/Registration/SimpleRegistration.aspx' )

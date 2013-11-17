@@ -6,7 +6,7 @@ describe 'Angieslist' do
 
   it 'should work for listed business' do
     business_data = sample_data(4)
-    scrapper = Angieslist.new(business_data)
+    scrapper = AngiesList.new(business_data)
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :listed
@@ -20,7 +20,7 @@ describe 'Angieslist' do
     business_data['business'] = 'noname business 234'
     business_data['phone'] = '34534534534'
 
-    scrapper = Angieslist.new(business_data)
+    scrapper = AngiesList.new(business_data)
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :unlisted
