@@ -13,7 +13,6 @@ class AbstractScrapper
 
   def close_browser
     return if @watir.nil?
-    puts "closing browser"
     @watir.close
     @watir = nil
   end
