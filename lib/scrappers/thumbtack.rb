@@ -1,4 +1,7 @@
 class Thumbtack < AbstractScrapper
+  # http://www.thumbtack.com/ca/fullerton/carpet-cleaning/window-and-blind-cleaning
+  # Bussiness name: Window & Blind Cleaning
+  # Zip: 92832
 
   def execute
     businessFound = {'status' => :unlisted}
@@ -21,3 +24,4 @@ class Thumbtack < AbstractScrapper
 
 end
 
+http://www.thumbtack.com/search?pagenum=1&keyword=window-and-blind-cleaning&location=92832

@@ -60,7 +60,7 @@ class Scanner
       result = @scrapper.execute
     rescue => e
       result = {
-          :error_message => "Scan failed for #{@site}: #{e}: #{e.backtrace.join("\n")}"
+          :error_message => "Scan failed for #{e}: #{e.backtrace.join("\n")}"
       }
     end
     @scrapper.close_browser # kill firefox instance if exists

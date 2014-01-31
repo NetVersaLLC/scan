@@ -1,32 +1,35 @@
 require 'awesome_print'
 
 class Zippro < AbstractScrapper
-
+  # http://92869.zip.pro/Inkling+Tattoo+Gallery
+  
   def execute
-    @data['businessfixed'] = @data['business'].gsub(" ", "+").gsub("-", "+")
+    result = {'status' => :unlisted}
 
-    businessFound = {
-        'status' => :unlisted
-    }
-    url = "http://#{@data['zip']}.zip.pro/#{@data['businessfixed']}"
-    page = Nokogiri::HTML(RestClient.get(url))
-    if page.css("div.organicListing").size > 0
-      link = page.css("a.result-title")
-      businessFound['listed_name'] = link.text.strip
-      link = link[0]["href"]
-      businessFound['listed_url'] = link
-      businessFound['listed_address'] = page.at_xpath('//div[@id="zp_div_result_1"]//p').text
+    url = "http://#{URI::encode(@data['zip'])}.zip.pro/#{URI::encode(@data['business'])}"
+    page = mechanize.get(url)
+    thelist = page.search('li div.resultList')
 
-      subpage = Nokogiri::HTML(RestClient.get(link))
-      businessFound['status'] = :listed
-      phone = subpage.at_css("span.head_phone.iconsprite.inprofile_head").text
-      businessFound['listed_phone'] = phone
+    unless thelist.size == 0
+      if thelist.first.search(".//a[@class='result-title']").text =~ /#{@data['business']}/i
+        profile_url = thelist.first.search(".//a[@class='result-title']").attribute('href').value
+        profile_page = mechanize.get(profile_url)
+
+        streetAddress = profile_page.search('span[@itemprop="street-address"]')[0].content
+        addressLocality = profile_page.search('span[@itemprop="locality"]')[0].content
+        addressRegion = profile_page.search('span[@itemprop="region"]')[0].content.gsub(" ", ", ")
+        postalCode = profile_page.search('span[@itemprop="postal-code"]')[0].content
+
+        result = {
+            'status' => :listed,
+            'listed_name' => profile_page.search('span[@itemprop="name"]')[0].content.strip,
+            'listed_address' => [streetAddress, addressLocality, addressRegion, postalCode].join(),
+            'listed_phone' => profile_page.search('span[@itemprop="tel"]')[0].content,
+            'listed_url' => profile_url
+        }
+      end
     end
-    businessFound
+    result
   end
 
 end
-
-
-
-

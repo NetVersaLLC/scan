@@ -1,4 +1,5 @@
 class Twitter < AbstractScrapper
+  # https://twitter.com/InklingTattooCA
 
   def execute
     page = mechanize.get('http://twitter.com/search?mode=users&q=' + URI::encode(@data['business']))

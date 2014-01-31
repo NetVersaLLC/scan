@@ -1,4 +1,5 @@
 class Hotfrog < AbstractScrapper
+  # http://www.hotfrog.com/Companies/Inkling-Tattoo-Gallery
 
   def execute
 

@@ -16,7 +16,7 @@ all_settings = Psych.load(File.read(application_path + '/application.yml'))
 $settings = all_settings[Sinatra::Base.settings.environment.to_s]
 
 require 'lib/scanner'
-
+set :database_extras, {:pool => 20, :timeout => 3000}
 set :database, 'sqlite://database.sqlite3'
 
 Airbrake.configure do |config|
