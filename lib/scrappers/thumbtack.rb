@@ -1,4 +1,5 @@
 class Thumbtack < AbstractScrapper
+  # doesn't have search feature
   # http://www.thumbtack.com/ca/fullerton/carpet-cleaning/window-and-blind-cleaning
   # Bussiness name: Window & Blind Cleaning
   # Zip: 92832

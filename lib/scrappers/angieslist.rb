@@ -2,7 +2,7 @@ class AngiesList < AbstractScrapper
 
   def execute
     watir.goto( 'https://business.angieslist.com/Registration/SimpleRegistration.aspx' )
-    watir.image(:alt,'Search').wait_until_present
+    watir.image(:alt,'Search').wait_until_present.class
     watir.text_field(:id => /CompanyName/).set @data[ 'business' ]
     watir.text_field(:id => /CompanyZip/).set @data[ 'zip' ]
     watir.image(:alt,'Search').click

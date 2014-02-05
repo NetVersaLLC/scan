@@ -1,42 +1,46 @@
 class Localpages < AbstractScrapper
+  # http://www.localpages.com/CA/Compton/New-Life-Praise-Temple
 
   def execute
-    businessfixed = @data['business'].gsub(" ", "-")
+    businessfixed = @data['business'].gsub(" ", "-").gsub("'", "")
     cityfixed = @data['city'].gsub(" ", "-")
     url = "http://www.localpages.com/#{@data['state_short']}/#{cityfixed}/#{businessfixed}"
 
-    businessFound = {}
-    begin
-      page = Nokogiri::HTML(RestClient.get(url))
+    businessFound = {'status' => :unlisted}
 
-      businessFound = {
-          'status' => :unlisted
-      }
-      page.css("ul.fluid_results_list > li").each do |item|
-        if replace_and(item.at_css("h3").text) =~ /#{replace_and(@data['business'])}/
+    begin
+      page = mechanize.get(url)
+
+      page.search("ul.fluid_results_list li").each do |item|
+        next unless replace_char(item.search('.//h3').text) =~ /#{replace_char(@data['business'])}/i
+        profile_url = item.search(".//a")[0]['href']
+        profile_page = mechanize.get(profile_url)
+
+        streetAddress = profile_page.search('span.address')[0].content.strip
+        addressLocality = profile_page.search('span.city')[0].content.strip
+        addressRegion = profile_page.search('span.state')[0].content.strip
+        postalCode = profile_page.search('span.state')[0].next.content[2..6].strip
+
+        businessFound['status'] = :claimed
+        if profile_page.search(".//a").text =~ /Claim Your Business Listing/i
           businessFound['status'] = :listed
-          businessFound['listed_name'] = item.at_css("h3").text # Return business name given on webpage
-          businessFound['listed_address'] = item.at_css("p").text
-          businessFound['listed_phone'] = item.at_css("span.result_phone").text
-          businessFound['listed_url'] = item.at_css("a").attr('href')
-          if not businessFound['listed_url'].nil?
-            subpage = Nokogiri::HTML(RestClient.get(businessFound['listed_url']))
-            claimLink = subpage.xpath("/html/body/div[2]/div/div[3]/div[1]/div[3]/div[2]/a")
-            if claimLink.length == 0
-              businessFound['status'] = :claimed
-            else
-              businessFound['status'] = :listed
-            end
-          end
         end
+
+        businessFound['listed_name'] = profile_page.search('.businessName')[0].content.strip
+        businessFound['listed_address'] = [streetAddress, addressLocality, addressRegion, postalCode].join(", ")
+        businessFound['listed_phone'] = profile_page.search('.phone_icon')[0].content.strip
+        businessFound['listed_url'] = profile_url
+
+        return businessFound
       end
     rescue
     end
+
     businessFound
   end
 
-  def replace_and(business)
-    return business.gsub("&", "and")
+  def replace_char(business)
+    business.gsub("&", "and").gsub("'", "")
   end
 
 end

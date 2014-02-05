@@ -2,6 +2,21 @@ class Bing < AbstractScrapper
 
   # phone number is enough to identify business
   def execute
+    url = "https://www.bingplaces.com/DashBoard"
+    # page = RestClient.get(url)
+    agent = Mechanize.new
+
+    page = agent.get(url)
+    form = agent.page.forms[2]
+    form.field_with(:name => "BusinessName").value = "Inkling Tattoo Gallery"
+    form.field_with(:name => "City").value = "92869"
+    form.field_with(:name => "SearchCond").value = "SearchByBusinessNameAndCity"
+    page = form.submit
+    return page.search('/html/body/div.divs/table#mainContent/tbody/td/form.middlePane/div').text
+
+
+    return agent.page.forms[2].fields
+
     html = rest_client.get "https://www.bingplaces.com/DashBoard"
 
     nok = Nokogiri::HTML(html)
