@@ -10,9 +10,9 @@ describe 'Zippro' do
     result.class.should == Hash
     result['status'].should == :listed
     result['listed_name'].should == business_data['business']
+    result['listed_address'].should == "3904 E Chapman Ave, Orange, CA, 92869"
     result['listed_phone'].should == business_data['phone']
     result['listed_url'].should == "http://92869.zip.pro/profiles/Inkling-Tattoo-Gallery_25680007"
-    result['listed_address'].should == "3904 E Chapman Ave, Orange, CA 92869"
   end
 
   it 'should not fail unlisted business' do

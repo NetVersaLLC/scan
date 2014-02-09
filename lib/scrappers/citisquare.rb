@@ -39,7 +39,3 @@ class Citisquare < AbstractScrapper
   end
 
 end
-
-
-
-

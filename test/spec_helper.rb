@@ -84,6 +84,9 @@ $business_data = {
         "county" => "Orange",
         "country" => "US"
     },
+    5 => {
+        "business" => "McDonald's",
+    },
 }
 
 def sample_data(id)
@@ -92,4 +95,3 @@ end
 
 # set test environment
 Sinatra::Base.set :environment, :test
-
