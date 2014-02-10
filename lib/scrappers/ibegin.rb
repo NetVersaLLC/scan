@@ -4,7 +4,7 @@ class Ibegin < AbstractScrapper
     @use_proxy = true
 
     url = "http://www.ibegin.com/search/phone/?phone=#{CGI.escape(@data['phone'])}"
-    puts(url)
+    # puts(url)
     page = Nokogiri::HTML(rest_client.get(url))
 
     businessFound = {}

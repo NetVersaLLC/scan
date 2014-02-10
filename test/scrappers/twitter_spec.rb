@@ -14,4 +14,15 @@ describe 'Twitter' do
     result['listed_url'].should == "http://twitter.com/McDonalds"
   end
 
+  it 'should not fail for unlisted business' do
+    business_data = sample_data(0)
+    business_data['business'] = 'noname business 234'
+    business_data['phone'] = '34534534534'
+
+    scrapper = Twitter.new(business_data)
+    result = scrapper.execute
+    result.class.should == Hash
+    result['status'].should == :unlisted
+  end
+
 end

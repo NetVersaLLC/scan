@@ -4,16 +4,13 @@ require 'lib/scrappers/jayde'
 describe 'Jayde' do
 
   it 'should work for listed business' do
-    business_data = {
-      'business' => 'Her SEO',
-    }
-    scrapper = Jayde.new(business_data)
+    scrapper = Jayde.new(sample_data(5))
     result = scrapper.execute
     result.class.should == Hash
     result['status'].should == :listed
-    result['listed_name'].should == 'Her SEO? | Search engine optimization for women-owned businesses | Mompreneur SEO'
+    result['listed_name'].should == "McDonald's"
     result['listed_phone'].should == ''
-    result['listed_url'].should == 'http://herseo.com'
+    result['listed_url'].should == 'http://mcdonalds.co.uk'
     result['listed_address'].should == ''
   end
 

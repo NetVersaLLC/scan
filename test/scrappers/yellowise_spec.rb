@@ -12,7 +12,7 @@ describe 'Yellowise' do
     result['listed_name'].should == business_data['business']
     result['listed_phone'].should == business_data['phone']
     result['listed_url'].should == "http://www.yellowise.com/business/Orange-CA/Inkling-Tattoo-Gallery/Inkling-Tattoo-Gallery/1532490-ST6?&ids=1205249"
-    result['listed_address'].should == "3904 E. Chapman Ave.Orange, CA 92869"
+    result['listed_address'].should == "3904 E. Chapman Ave., Orange, CA, 92869"
   end
 
   it 'should not fail for unlisted business' do

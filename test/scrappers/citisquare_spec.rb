@@ -8,11 +8,11 @@ describe 'Citisquare' do
     scrapper = Citisquare.new(business_data)
     result = scrapper.execute
     result.class.should == Hash
-    result['status'].should == :claimed
+    result['status'].should == :listed
     result['listed_name'].should == business_data['business']
-    result['listed_phone'].should == '949-287-3810'
+    result['listed_phone'].should == '(949) 287-3810'
     result['listed_url'].should == "http://citysquares.com/b/crystals-bakery-20172691"
-    result['listed_address'].should == "106 31st Street Newport Beach CA 92663"
+    result['listed_address'].should == "106 31st Street, Newport Beach, CA, 92663"
   end
 
   it 'should not fail unlisted business' do
