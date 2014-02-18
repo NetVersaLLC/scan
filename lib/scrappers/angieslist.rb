@@ -1,31 +1,51 @@
 class AngiesList < AbstractScrapper
+  # https://business.angieslist.com/Registration/SimpleRegistration.aspx plus parametres for POST HTTP request
+  # Search by:
+  # - Business name & Zip
 
   def execute
-    watir.goto( 'https://business.angieslist.com/Registration/SimpleRegistration.aspx' )
-    watir.image(:alt,'Search').wait_until_present.class
-    watir.text_field(:id => /CompanyName/).set @data[ 'business' ]
-    watir.text_field(:id => /CompanyZip/).set @data[ 'zip' ]
-    watir.image(:alt,'Search').click
-    watir.div(:class, 'RegistrationLightbox').wait_until_present
+    businessFound = {'status' => :unlisted}
 
-    result_count = watir.table(:class, 'wide100percent').rows.length
+    url = "https://business.angieslist.com/Registration/SimpleRegistration.aspx"
+    agent = Mechanize.new
+    agent.get(url)
 
-    for n in 1...result_count
-      result = watir.table(:class, 'wide100percent')[n].text
-      if result.include?(@data[ 'business' ])
-        watir.table(:class, 'wide100percent')[n].image(:alt,'Select').click
-        watir.div(:id, 'Step2of2Title').wait_until_present
-        business_data_table = watir.element(:css => '.leftrightpaddedmargin5 table.bold')
-        return {
-          'status' => :listed,
-          'listed_name' => business_data_table.td(:index => 1).text.strip,
-          'listed_address' => business_data_table.td(:index => 3).text.strip,
-          'listed_phone' => '',
-        }
-      end
+    search_list = agent.post(url, {
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyContactLastName' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyContactFirstName' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyEmail' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyPhone' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyPostalCode' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyState' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyCity' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyAddress' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24AddCompanyControl%24CompanyName' => '',
+      'ctl00%24ContentPlaceHolderMainContent%24SimpleRegistrationWizard%24fakeTargetId' => '',
+      'ctl00_ContentPlaceHolderMainContent_SimpleRegistrationWizard_AddCompanyControl_CategorySelections_rightlstbox_REMOVED' => '',
+      'ctl00_ContentPlaceHolderMainContent_SimpleRegistrationWizard_AddCompanyControl_CategorySelections_rightlstbox_ADDED' => '',
+      'ctl00_ContentPlaceHolderMainContent_SimpleRegistrationWizard_AddCompanyControl_CategorySelections_leftlstbox_REMOVED' => '',
+      'ctl00_ContentPlaceHolderMainContent_SimpleRegistrationWizard_AddCompanyControl_CategorySelections_leftlstbox_ADDED' => '',
+      '__LASTFOCUS' => '',
+      '__EVENTARGUMENT' => '',
+      '__VIEWSTATE_KEY' => agent.page.forms[0]['__VIEWSTATE_KEY'],
+      '__EVENTTARGET' => "ctl00$ContentPlaceHolderMainContent$SimpleRegistrationWizard$FindCompanyControl$SearchByNameSubmitButton",
+      'ctl00$ContentPlaceHolderMainContent$SimpleRegistrationWizard$FindCompanyControl$CompanyName' => "#{@data['business']}", 
+      'ctl00$ContentPlaceHolderMainContent$SimpleRegistrationWizard$FindCompanyControl$CompanyZip'=> "#{@data['zip']}"
+    })
+
+    search_list.search("tbody.scrollContent tr").each do |item|
+      next unless item.search(".//td[3]/span").text =~ /#{@data['business']}/i
+
+      businessFound['status'] = :listed
+      businessFound['listed_name'] = item.search(".//td[3]/span")[0].content.strip
+      businessFound['listed_address'] = item.search(".//td[6]/span")[0].content.strip
+      businessFound['listed_phone'] = item.search(".//td[5]/span")[0].content.strip
+      businessFound['listed_url'] = ''
+
+      return businessFound
     end
-    return {
-        'status' => :unlisted
-    }
+
+    businessFound
   end
+  
 end
