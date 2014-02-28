@@ -14,7 +14,7 @@ class Cylex < AbstractScrapper
     end
     
     page.css('div.lm-result-companyData').each do |item|
-      next unless  item.xpath(".//h2/a").text =~ /#{@data['business']}/i
+      next unless item.xpath(".//h2/a").text =~ /#{@data['business']}/i
 
       address_parts = [ item.xpath(".//span[@itemprop='streetAddress']"),
                         item.xpath(".//span[@itemprop='addressLocality']"),

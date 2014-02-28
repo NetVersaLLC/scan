@@ -2,23 +2,35 @@ require 'awesome_print'
 
 class Yelp < AbstractScrapper
   # http://www.yelp.com/search?find_desc=Inkling+Tattoo+Gallery&find_loc=92869
+  # Search by:
+  # - Business name
+  # - ZIP
 
   def execute
-    page = mechanize.get('http://www.yelp.com/search?find_desc=' + URI::encode(@data['business']) + '&find_loc=' + URI::encode(@data['zip']))
-    results = page.search('.search-results a.biz-name')
-    return {'status' => :unlisted} unless results.size > 0
-    profile_url = 'http://www.yelp.com' + results[0+1].attribute('href')
-    profile_page = mechanize.get(profile_url)
-    streetAddress = profile_page.search('span[@itemprop="streetAddress"]')[0].inner_html.gsub('<br>', ', ')
-    addressLocality = profile_page.search('span[@itemprop="addressLocality"]')[0].content
-    addressRegion = profile_page.search('span[@itemprop="addressRegion"]')[0].content
-    postalCode = profile_page.search('span[@itemprop="postalCode"]')[0].content
-    result = {
-        'status' => profile_page.search('#bizBox')[0].content.include?('Work Here? Claim This Business') ? :listed : :claimed,
-        'listed_name' => profile_page.search('h1[@itemprop="name"]')[0].content.strip,
-        'listed_address' => [streetAddress, addressLocality, addressRegion, postalCode].join(", "),
-        'listed_phone' => profile_page.search('#bizPhone')[0].content,
-        'listed_url' => profile_url
-    }
+    url = 'http://www.yelp.com/search?find_desc=' + URI::encode(@data['business']) + '&find_loc=' + URI::encode(@data['zip'])
+    page = mechanize.get(url)
+    
+    page.search("h3.search-result-title span a.biz-name").each do |item|
+      next unless item.text.gsub(/\W/,"") =~ /#{@data['business'].gsub(/\W/,"")}/i
+
+      businessUrl = 'http://www.yelp.com' + item.attr("href")
+      subpage = mechanize.get(businessUrl)
+
+      address_parts = [ subpage.search("span[@itemprop='streetAddress']"),
+                        subpage.search("span[@itemprop='addressLocality']"),
+                        subpage.search("span[@itemprop='addressRegion']"),
+                        subpage.search("span[@itemprop='postalCode']")]
+
+      return {
+        'status' => :listed,
+        'listed_name' => item.text.strip,
+        'listed_address' => address_form(address_parts),
+        'listed_phone' => subpage.search("span[@itemprop='telephone']").text.strip,
+        'listed_url' => businessUrl
+      }
+    end
+
+    return {'status' => :unlisted}
   end
+
 end
