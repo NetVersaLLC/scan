@@ -44,4 +44,34 @@ class AbstractScrapper
     end
     @watir
   end
+
+  def phone_form(phone_number)
+    res = ""
+
+    phone_number.each_char do |char|
+      if char =~ /^[0-9]$/
+        res += char
+      end
+    end
+
+    if res.length == 10
+      res
+    else
+      phone_number
+    end
+  end
+
+  # tupalo.rb, foursquare.rb, cylex.rb
+  def address_form(address_parts)
+    businessAddress = []
+    address_parts.each do |part|
+      part = part.text.strip
+      if !part.blank?
+        businessAddress << part
+      end
+    end
+
+    businessAddress.join(", ")
+  end
+
 end
