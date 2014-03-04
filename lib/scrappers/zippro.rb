@@ -1,35 +1,49 @@
 require 'awesome_print'
 
 class Zippro < AbstractScrapper
-  # http://92869.zip.pro/Inkling+Tattoo+Gallery
-  
-  def execute
-    result = {'status' => :unlisted}
+  # http://94706.zip.pro/Jodie%27s%20Restaurant
+  # Request:
+  # - Business name
+  # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
+  def execute
     url = "http://#{URI::encode(@data['zip'])}.zip.pro/#{URI::encode(@data['business'])}"
     page = mechanize.get(url)
-    thelist = page.search('li div.resultList')
 
-    unless thelist.size == 0
-      if thelist.first.search(".//a[@class='result-title']").text =~ /#{@data['business']}/i
-        profile_url = thelist.first.search(".//a[@class='result-title']").attribute('href').value
-        profile_page = mechanize.get(profile_url)
+    page.search("li a.result-title").each do |item|
+      next unless item.text =~ /#{@data['business']}/i
 
-        streetAddress = profile_page.search('span[@itemprop="street-address"]')[0].content
-        addressLocality = profile_page.search('span[@itemprop="locality"]')[0].content
-        addressRegion = profile_page.search('span[@itemprop="region"]')[0].content.gsub(" ", ", ")
-        postalCode = profile_page.search('span[@itemprop="postal-code"]')[0].content
+      businessUrl = item.attr("href")
+      subpage = mechanize.get(businessUrl)
 
-        result = {
-            'status' => :listed,
-            'listed_name' => profile_page.search('span[@itemprop="name"]')[0].content.strip,
-            'listed_address' => [streetAddress, addressLocality, addressRegion, postalCode].join(),
-            'listed_phone' => profile_page.search('span[@itemprop="tel"]')[0].content,
-            'listed_url' => profile_url
-        }
+      # Sort by ZIP
+      next unless subpage.search("span[@itemprop='postal-code']").text =~ /#{@data['zip']}/i
+
+      # Sort by business phone number
+      businessPhone = subpage.search("span[@itemprop='tel']").text.strip
+      if !@data['phone'].blank?
+        next unless  phone_form(@data['phone']) == phone_form(businessPhone)
       end
+
+      address_parts = [ subpage.search("span[@itemprop='street-address']"),
+                        subpage.search("span[@itemprop='locality']"),
+                        subpage.search("span[@itemprop='region']"),
+                        subpage.search("span[@itemprop='postal-code']")]
+
+      return {
+        'status' => :listed,
+        'listed_name' => item.text.strip,
+        'listed_address' => address_form(address_parts).gsub(",,", ","),
+        'listed_phone' => businessPhone,
+        'listed_url' => businessUrl
+      }
     end
-    result
+
+    return {'status' => :unlisted}
   end
 
 end

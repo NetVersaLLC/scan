@@ -9,7 +9,7 @@ describe 'Facebook' do
     scrapper = Facebook.new(business_data)
     result = scrapper.execute
     result.class.should == Hash
-    result['status'].should == :claimed
+    result['status'].should == :listed
     result['listed_name'].should == business_data['business']
     result['listed_url'].should == "https://www.facebook.com/inklingtattoogallery"
   end

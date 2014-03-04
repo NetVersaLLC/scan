@@ -57,7 +57,7 @@ class Scanner
   def scan(skip_callback = false)
     RestClient.proxy = nil
     begin
-      result = @scrapper.execute
+      return result = @scrapper.execute
     rescue => e
       result = {
           :error_message => "Scan failed for #{e}: #{e.backtrace.join("\n")}"

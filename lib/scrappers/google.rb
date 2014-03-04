@@ -1,7 +1,11 @@
 class Google < AbstractScrapper
-  # Search by:
+  # Request:
   # - Business name
   # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
     api_key = 'AIzaSyCBULo3dEbDt8B1rIG4bKgzkUNx5_ubgs4'
@@ -19,11 +23,29 @@ class Google < AbstractScrapper
         json_page = RestClient.get "https://maps.googleapis.com/maps/api/place/details/json?reference=#{result['reference']}&sensor=true&key=#{api_key}"
         detail_page = JSON.parse(json_page)
 
+        businessAddress = detail_page['result']['formatted_address']
+        
+        # Sort by ZIP
+        businessZip = ""
+        detail_page['result']['address_components'].each do |address_component|
+          if address_component['types'].include?("postal_code")
+            businessZip = address_component['long_name']
+            businessAddress += ", " + businessZip
+          end
+        end
+        next unless businessZip == @data['zip']
+
+        # Sort by business phone number
+        businessPhone = detail_page['result']['formatted_phone_number']
+        if !@data['phone'].blank?
+          next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+        end
+
         return {
           'status' => :listed,
           'listed_name' => result['name'],
-          'listed_address' => detail_page['result']['formatted_address'],
-          'listed_phone' => detail_page['result']['formatted_phone_number'],
+          'listed_address' => businessAddress,
+          'listed_phone' => businessPhone,
           'listed_url' => detail_page['result']['url']
         }
       end

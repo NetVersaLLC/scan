@@ -1,8 +1,12 @@
 class Yahoo < AbstractScrapper
   # http://local.search.yahoo.com/search?p=Inkling Tattoo Gallery&addr=Orange, CA&fr2=sb-top&type_param=
-  # Search by:
+  # Request:
   # - Business name
   # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
     businessFound = {'status' => :unlisted}
@@ -20,38 +24,40 @@ class Yahoo < AbstractScrapper
     page_nok = Nokogiri::HTML(html)
 
     page_nok.xpath("//div[@class='res']/div[@class='content']").each do |content|
-      content.xpath("./h3").each do |h3|
-        if h3.inner_text.strip =~ /#{@data['business']}/i
-          h3.xpath("./div").each do |div|
-            div.remove
-          end
-          businessFound['listed_name'] = h3.inner_text.strip
+      next unless content.xpath("./h3/a").text =~ /#{@data['business']}/i
+      
+      # Sort by ZIP
+      next unless content.xpath("./div[@class='address']").text =~ /#{@data['zip']}/i
 
-          h3.xpath("./a").each do |a|
-            url = a.attr('href')
-            if url =~ /(local.yahoo.com.*)/
-              businessFound['listed_url'] = "http://#{$1}"
-            end
-          end
+      # Sort by business phone number
+      businessPhone = content.xpath("./div[@class='phone']").inner_text.strip
+      if !@data['phone'].blank?
+        next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+      end
 
-          businessFound['status'] = :listed
-          content.xpath("./span[@class='merchant-ver']").each do |div|
-            businessFound['status'] = :claimed
-          end
+      businessFound['listed_phone'] = businessPhone
+      businessFound['listed_name'] = content.xpath("./h3/a").inner_text.strip
 
-          content.xpath("./div[@class='phone']").each do |phone|
-            businessFound['listed_phone'] = phone.inner_text.strip
-          end
-
-          content.xpath("./div[@class='address']").each do |address|
-            address.xpath("./div").each do |div|
-              div.remove
-            end
-            businessFound['listed_address'] = address.inner_text.strip
-          end
+      content.xpath("./h3/a").each do |a|
+        url = a.attr('href')
+        if url =~ /(local.yahoo.com.*)/
+          businessFound['listed_url'] = "http://#{$1}"
         end
       end
-      break
+
+      businessFound['status'] = :listed
+      content.xpath("./span[@class='merchant-ver']").each do |div|
+        businessFound['status'] = :claimed
+      end
+
+      content.xpath("./div[@class='address']").each do |address|
+        address.xpath("./div").each do |div|
+          div.remove
+        end
+        businessFound['listed_address'] = address.inner_text.strip
+      end
+
+      return businessFound
     end
 
     businessFound

@@ -11,7 +11,7 @@ describe 'Google' do
     result.class.should == Hash
     result['status'].should == :listed
     result['listed_name'].should == business_data['business']
-    result['listed_address'].should == '3904 E Chapman Ave, Orange, CA, United States'
+    result['listed_address'].should == '3904 E Chapman Ave, Orange, CA, United States, 92869'
     result['listed_phone'].should == business_data['phone']
     result['listed_url'].should == "https://plus.google.com/110522586766732861388/about?hl=en-US"
   end
