@@ -1,7 +1,12 @@
 class AngiesList < AbstractScrapper
   # https://business.angieslist.com/Registration/SimpleRegistration.aspx plus parametres for POST HTTP request
-  # Search by:
-  # - Business name & Zip
+  # Request:
+  # - Business name
+  # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
     businessFound = {'status' => :unlisted}
@@ -34,18 +39,24 @@ class AngiesList < AbstractScrapper
     })
 
     search_list.search("tbody.scrollContent tr").each do |item|
-      next unless item.search(".//td[3]/span").text =~ /#{@data['business']}/i
+      next unless match_name?(item.search(".//td[3]/span"), @data['business'])
 
-      businessFound['status'] = :listed
-      businessFound['listed_name'] = item.search(".//td[3]/span")[0].content.strip
-      businessFound['listed_address'] = item.search(".//td[6]/span")[0].content.strip
-      businessFound['listed_phone'] = item.search(".//td[5]/span")[0].content.strip
-      businessFound['listed_url'] = ''
+      # Sort by business phone number
+      businessPhone = item.search(".//td[5]/span").text.strip
+      if !@data['phone'].blank?
+        next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+      end
 
-      return businessFound
+      return {
+        'status' => :listed,
+        'listed_name' => item.search(".//td[3]/span").text.strip,
+        'listed_address' => item.search(".//td[6]/span").text.strip,
+        'listed_phone' => businessPhone,
+        'listed_url' => ''
+      }
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
   
 end

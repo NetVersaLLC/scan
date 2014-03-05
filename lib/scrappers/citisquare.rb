@@ -1,41 +1,55 @@
 class Citisquare < AbstractScrapper
   # http://citysquares.com/s/business?t=Inkling+Tattoo+Gallery
+  # Request:
+  # - Business name
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
-    businessFound = {'status' => :unlisted}
     url = "http://citysquares.com/s/business?t=#{URI::encode(@data['business'])}"
     page = mechanize.get(url)
 
-
     page.search("div#cs-biz-listing ul li").each do |item|
-      next unless item.search(".//a").text =~ /#{@data['business']}/i
+      next unless match_name?(item.search(".//a"), @data['business'])
 
-      businessFound['status'] = :listed
-      if item['class'] == "paid"
-        businessFound['status'] = :claimed
+      businessUrl = item.search(".//a")[0]['href']
+      subpage = mechanize.get(businessUrl)
+
+      # Sort by ZIP
+      if !subpage.search("span.postal-code").text.blank?
+        next unless subpage.search("span.postal-code").text =~ /#{@data['zip']}/i
+      elsif !subpage.search("span.locality").text.blank?
+        next unless subpage.search("span.locality").text =~ /#{@data['city']}/i
       end
 
-      profile_url = item.search(".//a")[0]['href']
-      profile_page = mechanize.get(profile_url)
-
-      streetAddress = profile_page.search('span.street-address')[0].content.strip
-      addressLocality = profile_page.search('span.locality')[0].content.strip
-      addressRegion = profile_page.search('span.region')[0].content.strip
-      postalCode = profile_page.search('span.postal-code')[0].content.strip
-
-      businessFound['listed_name'] = profile_page.search('h1.fn.org')[0].content.strip
-      businessFound['listed_address'] = [streetAddress, addressLocality, addressRegion, postalCode].join(", ")
-      if profile_page.search('.phone.tel')[0]
-        businessFound['listed_phone'] = profile_page.search('.phone.tel')[0].content.strip
+      if subpage.search('.phone.tel')[0]
+        businessPhone = subpage.search('.phone.tel').text.strip
       else
-        businessFound['listed_phone'] = ""
+        businessPhone = ""
       end
-      businessFound['listed_url'] = profile_url
 
-      return businessFound
+      # Sort by business phone number
+      if !@data['phone'].blank? && !businessPhone.blank?
+        next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+      end
+
+      address_parts = [ subpage.search("span.street-address"),
+                        subpage.search("span.locality"),
+                        subpage.search("span.region"),
+                        subpage.search("span.postal-code")]
+
+      return {
+        'status' => item['class'] == "paid" ? :claimed : :listed,
+        'listed_name' => item.search(".//a").text.strip,
+        'listed_address' => address_form(address_parts),
+        'listed_phone' => businessPhone,
+        'listed_url' => businessUrl
+      }
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
 
 end

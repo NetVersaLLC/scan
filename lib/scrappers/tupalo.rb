@@ -13,7 +13,7 @@ class Tupalo < AbstractScrapper
     page_nok = Nokogiri::HTML(RestClient.get(url))
 
     page_nok.css("div.title").each do |item|
-      next unless item.xpath(".//span[@itemprop='name']").text =~ /#{@data['business']}/i
+      next unless match_name?(item.xpath(".//span[@itemprop='name']"), @data['business'])
 
       businessUrl = item.xpath(".//a")[0].attr("href")
       subpage = Nokogiri::HTML(RestClient.get(businessUrl))

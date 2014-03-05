@@ -62,7 +62,7 @@ class AbstractScrapper
     end
   end
 
-  # tupalo.rb, foursquare.rb, cylex.rb
+  # tupalo.rb, foursquare.rb, cylex.rb and etc.
   def address_form(address_parts)
     businessAddress = []
     address_parts.each do |part|
@@ -73,6 +73,11 @@ class AbstractScrapper
     end
 
     businessAddress.join(", ")
+  end
+
+  # yellowise.rb, mycitybusiness.rb, zippro.rb and etc.
+  def match_name?(gotten_name, requested_name)
+    gotten_name.text.strip.downcase == requested_name.downcase
   end
 
 end

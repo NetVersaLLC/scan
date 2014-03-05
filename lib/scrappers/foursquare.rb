@@ -13,7 +13,7 @@ class Foursquare < AbstractScrapper
 		page = Nokogiri::HTML(RestClient.get(url))
 
 		page.css("div.venueBlock").each do |item|
-			next unless item.css("div.venueName").text =~ /#{@data['business']}/i
+			next unless match_name?(item.css("div.venueName"), @data['business'])
 				
 				businessUrl = item.css("div.venueName a")[0].attr("href")
     		unless businessUrl.include?('http')

@@ -24,7 +24,7 @@ class Yahoo < AbstractScrapper
     page_nok = Nokogiri::HTML(html)
 
     page_nok.xpath("//div[@class='res']/div[@class='content']").each do |content|
-      next unless content.xpath("./h3/a").text =~ /#{@data['business']}/i
+      next unless match_name?(content.xpath("./h3/a"), @data['business'])
       
       # Sort by ZIP
       next unless content.xpath("./div[@class='address']").text =~ /#{@data['zip']}/i

@@ -15,7 +15,7 @@ class Yelp < AbstractScrapper
     page = mechanize.get(url)
     
     page.search("h3.search-result-title span a.biz-name").each do |item|
-      next unless item.text.gsub(/\W/,"") =~ /#{@data['business'].gsub(/\W/,"")}/i
+      next unless item.text.gsub(/\W/,"").strip.downcase == @data['business'].gsub(/\W/,"").downcase
 
       businessUrl = 'http://www.yelp.com' + item.attr("href")
       subpage = mechanize.get(businessUrl)

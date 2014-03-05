@@ -12,8 +12,10 @@ class Facebook < AbstractScrapper
 
     if page.search("div#pagelet_search_no_results").blank?
       page.search("div.detailedsearch_result").each do |item|
-        next unless item.search("div.instant_search_title a").text =~ /#{@data['business']}/i
-        next unless item.search("div.fbProfileByline").blank? # Skip a personal page
+        next unless match_name?(item.search("div.instant_search_title a"), @data['business'])
+        # Skip a personal page
+        next unless item.search("div.fbProfileByline").blank?
+        # Sort by ZIP
         next unless item.search("div.fsm.fwn.fcg div.fsm.fwn.fcg")[0].text =~ /#{@data['zip']}/i
 
         return {

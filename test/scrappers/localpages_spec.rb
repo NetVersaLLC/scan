@@ -12,7 +12,7 @@ describe 'Localpages' do
     result['listed_name'].should == business_data['business']
     result['listed_phone'].should == business_data['phone']
     result['listed_url'].should == "http://www.localpages.com/ca/orange/lpd-17146935-signal-lounge.html"
-    result['listed_address'].should == "3804 E Chapman Ave Ste F, Orange, CA, 92869"
+    result['listed_address'].should == "3804 E Chapman Ave Ste F, Orange, CA 92869"
   end
 
   it 'should not fail unlisted business' do

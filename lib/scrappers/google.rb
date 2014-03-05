@@ -18,7 +18,7 @@ class Google < AbstractScrapper
 
     if general_page['results'] and general_page['results'].length > 0
       general_page['results'].each do |result|
-        next unless replace_and(result['name']) =~ /#{replace_and(@data['business'])}/i
+        next unless replace_and(result['name']).strip.downcase == replace_and(@data['business']).downcase
 
         json_page = RestClient.get "https://maps.googleapis.com/maps/api/place/details/json?reference=#{result['reference']}&sensor=true&key=#{api_key}"
         detail_page = JSON.parse(json_page)

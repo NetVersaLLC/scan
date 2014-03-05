@@ -15,7 +15,7 @@ class Zippro < AbstractScrapper
     page = mechanize.get(url)
 
     page.search("li a.result-title").each do |item|
-      next unless item.text =~ /#{@data['business']}/i
+      next unless match_name?(item, @data['business'])
 
       businessUrl = item.attr("href")
       subpage = mechanize.get(businessUrl)

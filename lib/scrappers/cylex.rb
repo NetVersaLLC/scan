@@ -18,7 +18,7 @@ class Cylex < AbstractScrapper
     end
     
     page.css('div.lm-result-companyData').each do |item|
-      next unless item.xpath(".//h2/a").text.inspect.gsub('\u2019', "") =~ /#{@data['business'].gsub("'", "")}/i
+      next unless item.xpath(".//h2/a").text.strip.inspect.gsub('\u2019', "").downcase == @data['business'].inspect.gsub("'", "").downcase
 
       # Sort by ZIP
       next unless item.xpath(".//span[@itemprop='postalCode']").text =~ /#{@data['zip']}/i

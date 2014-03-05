@@ -1,8 +1,13 @@
 class Bing < AbstractScrapper
+  # Request:
+  # - Business name
+  # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
-    businessFound = {'status' => :unlisted}
-
     agent = Mechanize.new
     page = agent.get("https://www.bing.com")
 
@@ -14,27 +19,34 @@ class Bing < AbstractScrapper
     content_key = "bing.com/local/Details.aspx"
 
     search_list.search("div#results ul li").each do |item|
-        next unless item.search(".//cite").text =~ /#{content_key}/i
-        next unless item.search(".//p[contains(text(), \"#{@data['business']}\")]")
+      next unless item.search(".//cite").text =~ /#{content_key}/i
+      next unless item.search(".//p[contains(text(), \"#{@data['business']}\")]")
 
-        profile_url = item.search(".//h3/a")[0]['href']
-        profile_page = mechanize.get(profile_url)
+      businessUrl = item.search(".//h3/a")[0]['href']
+      subpage = mechanize.get(businessUrl)
 
-        fullAddress = profile_page.search('span.business_address')[0].content.strip.split(", ")
-        streetAddress = fullAddress[0]
-        addressLocality = fullAddress[1]
-        stateAndPostalCode = fullAddress[2].gsub(" ", ", ")
+      # Additional sort by business name
+      next unless match_name?(subpage.search('div.business_name h2'), @data['business'])
 
-        businessFound['status'] = :listed
-        businessFound['listed_name'] = profile_page.search('div.business_name h2')[0].content.strip
-        businessFound['listed_address'] = [streetAddress, addressLocality, stateAndPostalCode].join(", ")
-        businessFound['listed_phone'] = profile_page.search('span.business_phone_number')[0].content.strip
-        businessFound['listed_url'] = profile_url
+      # Sort by ZIP
+      next unless subpage.search('span.business_address').text =~ /#{@data['zip']}/i
 
-        return businessFound
+      # Sort by business phone number
+      businessPhone = subpage.search('span.business_phone_number').text.strip
+      if !@data['phone'].blank?
+        next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+      end
+
+      return {
+        'status' => :listed,
+        'listed_name' => subpage.search('div.business_name h2').text.strip,
+        'listed_address' => subpage.search('span.business_address').text.strip,
+        'listed_phone' => businessPhone,
+        'listed_url' => businessUrl
+      }
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
 
 end

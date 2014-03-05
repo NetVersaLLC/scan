@@ -14,7 +14,7 @@ class Expressbusinessdirectory < AbstractScrapper
     page = Nokogiri::HTML(RestClient.get(url))
 
     page.xpath("//div[@id='content-left']/b/a").each do |item|
-      next unless item.text.gsub('&', 'and') =~ /#{@data['business'].gsub('&', 'and')}/i
+      next unless item.text.strip.gsub('&', 'and').downcase == @data['business'].gsub('&', 'and').downcase
       
       businessUrl = item.attr("href")
       subpage = Nokogiri::HTML(RestClient.get(businessUrl))

@@ -1,33 +1,47 @@
 class Hotfrog < AbstractScrapper
   # http://www.hotfrog.com/Companies/Inkling-Tattoo-Gallery
-  # Search by:
+  # Request:
   # - Business name
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
-    businessFound = {'status' => :unlisted}
-
     businessFixed = replace_char(@data['business'])
-    profile_url = "http://www.hotfrog.com/Companies/" + businessFixed
+    url = "http://www.hotfrog.com/Companies/" + businessFixed
 
     begin
-      profile_page = Nokogiri::HTML(RestClient.get(profile_url))
+      page = Nokogiri::HTML(RestClient.get(url))
 
-      if profile_page.search('.company-contact-info')
-        fullAddress = profile_page.search('.company-contact-info strong')[0].next.content.strip.split(", ")
-        streetAddress = fullAddress[0]
-        addressLocality = fullAddress[1]
-        stateAndPostalCode = fullAddress[2].gsub(" ", ", ")
+      if page.search('.company-contact-info')
 
-        businessFound['status'] = :listed
-        businessFound['listed_name'] = profile_page.search('.company-heading')[0].content.strip
-        businessFound['listed_address'] = [streetAddress, addressLocality, stateAndPostalCode].join(", ")
-        businessFound['listed_phone'] = profile_page.search('.company-contact-info strong')[1].next.content.strip
-        businessFound['listed_url'] = profile_url
+        # Sort by ZIP
+        unless page.search('.company-contact-info strong')[0].next.text =~ /#{@data['zip']}/i
+          return {'status' => :unlisted}
+        end
+
+        # Sort by business phone number
+        businessPhone = page.search('.company-contact-info strong')[1].next.text.strip
+        if !@data['phone'].blank?
+          unless  phone_form(@data['phone']) == phone_form(businessPhone)
+            return {'status' => :unlisted}
+          end
+        end
+
+        return {
+          'status' => :listed,
+          'listed_name' => page.search('.company-heading').text.strip,
+          'listed_address' => page.search('.company-contact-info strong')[0].next.text.strip,
+          'listed_phone' => businessPhone,
+          'listed_url' => url
+        }
       end
     rescue
+      return {'status' => :unlisted}
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
 
   def replace_char(business)
@@ -35,5 +49,3 @@ class Hotfrog < AbstractScrapper
   end
 
 end
-
-

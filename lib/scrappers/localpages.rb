@@ -1,42 +1,46 @@
 class Localpages < AbstractScrapper
   # http://www.localpages.com/CA/Compton/New-Life-Praise-Temple
+  # Request:
+  # - Business name
+  # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
     businessfixed = @data['business'].gsub(" ", "-").gsub("'", "")
     cityfixed = @data['city'].gsub(" ", "-")
     url = "http://www.localpages.com/#{@data['state_short']}/#{cityfixed}/#{businessfixed}"
 
-    businessFound = {'status' => :unlisted}
-
     begin
       page = mechanize.get(url)
 
       page.search("ul.fluid_results_list li").each do |item|
-        next unless replace_char(item.search('.//h3').text) =~ /#{replace_char(@data['business'])}/i
-        profile_url = item.search(".//a")[0]['href']
-        profile_page = mechanize.get(profile_url)
+        next unless replace_char(item.search('.//h3').text.strip.downcase) == replace_char(@data['business']).downcase
 
-        streetAddress = profile_page.search('span.address')[0].content.strip
-        addressLocality = profile_page.search('span.city')[0].content.strip
-        addressRegion = profile_page.search('span.state')[0].content.strip
-        postalCode = profile_page.search('span.state')[0].next.content[2..6].strip
+        # Sort by ZIP
+        next unless item.search(".//p")[0].text =~ /#{@data['zip']}/i
 
-        businessFound['status'] = :claimed
-        if profile_page.search(".//a").text =~ /Claim Your Business Listing/i
-          businessFound['status'] = :listed
+        # Sort by business phone number
+        businessPhone =  item.search(".//span[@class='result_phone']").text.strip
+        if !@data['phone'].blank?
+          next unless  phone_form(@data['phone']) == phone_form(businessPhone)
         end
 
-        businessFound['listed_name'] = profile_page.search('.businessName')[0].content.strip
-        businessFound['listed_address'] = [streetAddress, addressLocality, addressRegion, postalCode].join(", ")
-        businessFound['listed_phone'] = profile_page.search('.phone_icon')[0].content.strip
-        businessFound['listed_url'] = profile_url
-
-        return businessFound
+        return {
+          'status' => :listed,
+          'listed_name' => item.search('.//h3').text.strip,
+          'listed_address' => item.search(".//p")[0].text.strip,
+          'listed_phone' => businessPhone,
+          'listed_url' => item.search(".//a")[0]['href']
+        }
       end
     rescue
+      return {'status' => :unlisted}
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
 
   def replace_char(business)
@@ -44,7 +48,3 @@ class Localpages < AbstractScrapper
   end
 
 end
-
-
-
-

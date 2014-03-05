@@ -11,8 +11,8 @@ describe 'Mycitybusiness' do
     result['status'].should == :listed
     result['listed_name'].should == "Inkling Tattoo Gallery"
     result['listed_phone'].should == "714-538-8748"
-    result['listed_url'].should == "http://www.facebook.com/inklingtattoogallery"
-    result['listed_address'].should == "3904 E. Chapman Avenue, Orange, CA, 92869"
+    result['listed_url'].should == ""
+    result['listed_address'].should == "3904 E. Chapman Avenue, Orange, CA 92869"
   end
 
   it 'should not fail unlisted business' do

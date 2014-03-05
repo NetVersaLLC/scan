@@ -24,7 +24,8 @@ class Magicyellow < AbstractScrapper
 
 		if !page_nok.xpath("//td[@class='lAddress']")[0].blank?
 			page_nok.xpath("//td[@class='lAddress']")[0].parent.parent.xpath("./tr").each do |item|
-				next unless item.search(".//b").text =~ /#{@data['business']}/i
+				next unless match_name?(item.search(".//b"), @data['business'])
+				# Sort by ZIP
 				next unless item.text =~ /#{@data['zip']}/i
 
 				businessAddress = []

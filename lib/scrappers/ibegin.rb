@@ -1,43 +1,34 @@
 class Ibegin < AbstractScrapper
+  # http://www.ibegin.com/search/phone/?phone=510-526-1109
+  # Request:
+  # - Business phone number
+  # Sort:
+  # - Business name
+  # - ZIP
 
   def execute
     @use_proxy = true
 
-    url = "http://www.ibegin.com/search/phone/?phone=#{CGI.escape(@data['phone'])}"
-    # puts(url)
+    businessPhone = phone_form(@data['phone'])
+    url = "http://www.ibegin.com/search/phone/?phone=#{CGI.escape(businessPhone)}"
     page = Nokogiri::HTML(rest_client.get(url))
 
-    businessFound = {}
-    unless page.css("div.business").length == 0
-      link = page.css("div.business a")
-      link = "http://www.ibegin.com" + link[0]["href"]
-      businessFound['listed_url'] = link
-      subpage = Nokogiri::HTML(rest_client.get(link))
-      subpage.css("p.bizContactDetails").each do |p|
-        contact_details = p.inner_text.to_s
-        if contact_details =~ /(\(\d\d\d\) \d\d\d-\d\d\d\d)/
-          phone = $1
-          contact_details.gsub!(phone, '').strip
-          phone.gsub!(/[()]/, '')
-          phone.gsub!(/ /, '-')
-          businessFound['listed_phone'] = phone
-        end
-        businessFound['listed_address'] = contact_details
-      end
-      businessFound['listed_name'] = subpage.css(".bizTitle").inner_text.to_s
-      claimLink = subpage.css("li#axNavClaimit a")
-      if claimLink.length == 0
-        businessFound['status'] = :claimed
-      else
-        businessFound['status'] = :listed
-      end
-      unless businessFound.has_key?('listed_phone')
-        # ibegin pages broken sometimes. Business considered as unlisted for such cases
-        businessFound['status'] = :unlisted
-      end
-    else
-      businessFound['status'] = :unlisted
+    page.xpath("//div[@class='business']").each do |item|
+      next unless match_name?(item.xpath(".//strong/a"), @data['business'])
+
+      # Sort by ZIP
+      next unless item.xpath(".//small").text =~ /#{@data['zip']}/i
+
+      return {
+        'status' => :listed,
+        'listed_name' => item.xpath(".//strong/a").text.strip,
+        'listed_address' => item.xpath(".//small").text.strip,
+        'listed_phone' => businessPhone,
+        'listed_url' => "http://www.ibegin.com" + item.xpath(".//strong/a")[0].attr("href")
+      }
     end
-    businessFound
+
+    return {'status' => :unlisted}
   end
+
 end

@@ -1,29 +1,60 @@
 class Mycitybusiness < AbstractScrapper
   # http://www.mycitybusiness.net/search.php plus parametres for POST HTTP request
+  # Request:
+  # - Business name
+  # - ZIP
+  # Sort:
+  # - Business name
+  # - ZIP
+  # - Business phone number
 
   def execute
-    businessFound = {'status' => :unlisted}
-    html = RestClient.post('http://www.mycitybusiness.net/search.php', {:kword => @data['business'], :city => @data['city'], :state => @data['state_short']})
+    url = 'http://www.mycitybusiness.net/search.php'
+    html = RestClient.post(url, {:kword => @data['business'], 
+                                 :city  => @data['city'], 
+                                 :state => @data['state_short']
+                                }
+                          )
     page = Nokogiri::HTML(html)
 
-    count = page.xpath("//td//b[contains(text(), 'Results')]").text.split(" ")[0].to_i
-    unless count == 0
+    if page.xpath("//td//b[contains(text(), 'Results')]").text.split(" ")[0].to_i != 0
       list_start = page.xpath("//strong[contains(text(), 'Company / Address')]")[0]
       tbody = list_start.parent.parent.parent
 
-      streetAddress = tbody.xpath("./tr[3]/td[1]/*/tr[1]/td[1]").text.strip
-      addressRegion = tbody.xpath("./tr[3]/td[1]/*/tr[2]/td[1]").text.strip.gsub(",", "").split(" ").join(", ")
+      tbody.xpath(".//strong").each do |item|
+        next unless match_name?(item, @data['business'])
+        tr = item.parent.parent.next
 
-      businessFound['status'] = :listed
-      businessFound['listed_name']  = tbody.xpath("./tr[2]//strong").text.strip
-      businessFound['listed_address'] = [streetAddress, addressRegion].join(", ")
-      businessFound['listed_phone'] = tbody.xpath("./tr[3]/td[2]").text.strip
-      unless tbody.xpath("./tr[3]/td[3]/*/tr[2]/td[1]/a").text.blank?
-        businessFound['listed_url'] = tbody.xpath("./tr[3]/td[3]/*/tr[2]/td[1]/a").attribute('href').value
+        address_parts = tr.xpath("./td[1]/*/tr")
+        address_parts.pop
+
+        zip_presence = nil
+        address_parts.each do |street_address|
+          if street_address.text =~ /#{@data['zip']}/i
+            zip_presence = true
+          end
+        end
+
+        # Sort by ZIP
+        next unless zip_presence
+
+        # Sort by business phone number
+        businessPhone = tr.xpath("./td[2]").text.strip
+        if !@data['phone'].blank?
+          next unless  phone_form(@data['phone']) == phone_form(businessPhone)
+        end
+
+        return {
+          'status' => :listed,
+          'listed_name' => item.text.strip,
+          'listed_address' => address_form(address_parts),
+          'listed_phone' => businessPhone,
+          'listed_url' => ''
+        }
       end
     end
 
-    businessFound
+    return {'status' => :unlisted}
   end
 
 end
