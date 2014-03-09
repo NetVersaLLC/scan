@@ -47,7 +47,7 @@ class AbstractScrapper
 
   def phone_form(phone_number)
     res = ""
-    phone = phone_number.gsub("+1", "")
+    phone = phone_number.gsub("+1", "").gsub("(1)", "")
     
     phone.each_char do |char|
       if char =~ /^[0-9]$/

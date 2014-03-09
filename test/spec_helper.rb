@@ -85,8 +85,26 @@ $business_data = {
         "country" => "US"
     },
     5 => {
-        "business" => "McDonald's",
+        "business" => "McDonald's"
     },
+    6 => {
+        "business" => "University of West Florida"
+    },
+    7 => {
+        "business" => "Burger King",
+        "zip" => "26003"
+    },
+    8 => {
+        "business" => "ADT Security Services",
+        "phone" => "(866) 285-8345",
+        "address" => "4511 Willow Road #8, Pleasanton, CA 94588",
+        "zip" => "94588",
+        "state" => "California",
+        "state_short" => "CA",
+        "city" => "Pleasanton",
+        "county" => "Alameda",
+        "country" => "US"
+    }
 }
 
 def sample_data(id)
