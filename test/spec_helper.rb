@@ -104,6 +104,10 @@ $business_data = {
         "city" => "Pleasanton",
         "county" => "Alameda",
         "country" => "US"
+    },
+    9 => {
+        "business" => "Green Pea Salon",
+        "zip" => "37204"
     }
 }
 

@@ -1,5 +1,5 @@
 class Mywebyellow < AbstractScrapper
-  # http://mywebyellow.com/Search/Signal-Lounge/92869/  
+  # http://mywebyellow.com/Search/Signal-Lounge/92869/
   # Request:
   # - Business name
   # - ZIP
