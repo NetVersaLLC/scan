@@ -108,6 +108,33 @@ $business_data = {
     9 => {
         "business" => "Green Pea Salon",
         "zip" => "37204"
+    },
+    10 => {
+        "business" => "Fine Art Gallery",
+        "phone" => "714-532-4498",
+        "address" => "1623 W Katella Ave, Orange CA 92867",
+        "zip" => "92867",
+        "state" => "California",
+        "state_short" => "CA",
+        "city" => "Orange"
+    },
+    11 => {
+        "business" => "Protect You Home - Adt Authorized Dealer",
+        "phone" => "(714) 464-6896",
+        "address" => "1815 E. Heim Ave., Orange, CA, 92865",
+        "zip" => "92865",
+        "state" => "California",
+        "state_short" => "CA",
+        "city" => "Orange"
+    },
+    12 => {
+        "business" => "Pinnacle Homes",
+        "phone" => "(248) 449-4000",
+        "address" => "52014 Carrington, Northville, MI, 48167",
+        "zip" => "48167",
+        "state" => "Michigan",
+        "state_short" => "MI",
+        "city" => "Northville"
     }
 }
 
