@@ -135,6 +135,38 @@ $business_data = {
         "state" => "Michigan",
         "state_short" => "MI",
         "city" => "Northville"
+    },
+    13 => {
+        "business" => "Cavatore Italian Restaurant",
+        "phone" => "713-8696622",
+        "address" => "2120 Ella Boulevard, Houston, TX 77008",
+        "zip" => "77008",
+        "state_short" => "TX",
+        "city" => "Houston"
+    },
+    14 => {
+        "business" => "Locksmith Placentia",
+        "phone" => "(714) 783-1139",
+        "address" => "919 Santiago Drive 1137, Placentia, CA 92870",
+        "zip" => "92870",
+        "state_short" => "CA",
+        "city" => "Placentia"
+    },
+    15 => {
+        "business" => "Connect Plumbing",
+        "phone" => "",
+        "address" => "Anaheim, CA 92805",
+        "zip" => "92805",
+        "state_short" => "CA",
+        "city" => "Anaheim"
+    },
+    16 => {
+        "business" => "The Pub Orlando",
+        "phone" => "+1 (407) 352-2305",
+        "address" => "9101 International Dr., Orlando, FL, 32819",
+        "zip" => "32819",
+        "state_short" => "FL",
+        "city" => "Orlando"
     }
 }
 

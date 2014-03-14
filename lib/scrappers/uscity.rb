@@ -1,5 +1,5 @@
-class Merchantcircle < AbstractScrapper
-  # http://www.merchantcircle.com/search?q=Inkling+Tattoo+Gallery&qn=92869
+class Uscity < AbstractScrapper
+  # http://uscity.net/orange-ca/inkling-tattoo-gallery
   # Request:
   # - Business name
   # - ZIP
@@ -9,17 +9,19 @@ class Merchantcircle < AbstractScrapper
   # - Business phone number
 
   def execute
-    url = "http://www.merchantcircle.com/search?q=#{CGI.escape(@data['business'])}&qn=#{@data['zip']}"
+    cityfixed = (@data['city'] + ' ' + @data['state_short']).gsub(" ", "-")
+    businessfixed = @data['business'].gsub('&','').gsub(/[ ']/, "-")
 
+    url = "http://uscity.net/#{cityfixed}/#{businessfixed}"
     page = Nokogiri::HTML(RestClient.get(url))
 
-    page.css("li.result").each do |item|
-      next unless match_name?(item.css("header a h3"), @data['business'])
+    page.css("div.boxborder").each do |item|
+      next unless match_name?(item.css("h3 a strong"), @data['business'])
 
       # Sort by ZIP
-      next unless item.css("a.directions").text =~ /#{@data['zip']}/i
+      next unless item.css("div.addressbox strong").text =~ /#{@data['zip']}/i
 
-      businessUrl = item.css("header a")[0].attr("href")
+      businessUrl = item.css("h3 a")[0].attr("href")
       subpage = Nokogiri::HTML(RestClient.get(businessUrl))
 
       # Sort by business phone number
@@ -34,8 +36,8 @@ class Merchantcircle < AbstractScrapper
                         subpage.css("span[@itemprop='postalCode']")]
 
       return {
-        'status' => subpage.css("a#claim-business").length > 0 ? :listed : :claimed,
-        'listed_name' => item.css("header a h3").text.strip,
+        'status' => subpage.css("p.mart1").blank? ? :listed : :claimed,
+        'listed_name' => item.css("h3 a strong").text.strip,
         'listed_address' => address_form(address_parts),
         'listed_phone' => businessPhone,
         'listed_url' => businessUrl
