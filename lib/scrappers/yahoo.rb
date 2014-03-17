@@ -11,51 +11,41 @@ class Yahoo < AbstractScrapper
   def execute
     businessFound = {'status' => :unlisted}
 
-    city_state = @data['city'] + ", " + @data['state_short']
     url = "http://local.search.yahoo.com/search"
-
     html = RestClient.get(url, { :params => { :p => @data['business'], 
-                                              :addr => city_state, 
+                                              :addr => @data['zip'], 
                                               :fr2 => 'sb-top', 
                                               :type_param => '' 
                                             } 
                                 }
                           )
-    page_nok = Nokogiri::HTML(html)
+    page = Nokogiri::HTML(html)
 
-    page_nok.xpath("//div[@class='res']/div[@class='content']").each do |content|
-      next unless match_name?(content.xpath("./h3/a"), @data['business'])
-      
+    page.css("ol.res div.content").each do |item|
+      businessUrl = item.css("h4 a")[0].attr("href")
+      subpage = Nokogiri::HTML(RestClient.get(businessUrl))
+      next unless match_name?(subpage.css("h1.kg-style1"), @data['business'])
+
       # Sort by ZIP
-      next unless content.xpath("./div[@class='address']").text =~ /#{@data['zip']}/i
+      next unless subpage.css("div.yl-biz-addr").text =~ /#{@data['zip']}/i
 
       # Sort by business phone number
-      businessPhone = content.xpath("./div[@class='phone']").inner_text.strip
+      businessPhone = subpage.css("li.yl-biz-ph").text.strip
       if !@data['phone'].blank?
         next unless  phone_form(@data['phone']) == phone_form(businessPhone)
       end
 
       businessFound['listed_phone'] = businessPhone
-      businessFound['listed_name'] = content.xpath("./h3/a").inner_text.strip
+      businessFound['listed_name'] = subpage.css("h1.kg-style1").text.strip
+      businessFound['listed_url'] = businessUrl
 
-      content.xpath("./h3/a").each do |a|
-        url = a.attr('href')
-        if url =~ /(local.yahoo.com.*)/
-          businessFound['listed_url'] = "http://#{$1}"
-        end
-      end
 
       businessFound['status'] = :listed
-      content.xpath("./span[@class='merchant-ver']").each do |div|
+      subpage.css("span.merchant-ver").each do |div|
         businessFound['status'] = :claimed
       end
 
-      content.xpath("./div[@class='address']").each do |address|
-        address.xpath("./div").each do |div|
-          div.remove
-        end
-        businessFound['listed_address'] = address.inner_text.strip
-      end
+      businessFound['listed_address'] = subpage.css("div.yl-biz-addr").text.strip
 
       return businessFound
     end

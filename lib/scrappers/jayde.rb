@@ -6,7 +6,7 @@ class Jayde < AbstractScrapper
   # - Business name
 
   def execute
-    html = rest_client.get('http://jayde.com/sch.html?q=' + URI::encode(@data['business']))
+    html = rest_client.get('http://jayde.com/schx.html?q=' + URI::encode(@data['business']))
     if html.include?('Sorry, no match found')
       return {'status' => :unlisted}
     end
